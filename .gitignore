@@ -27,6 +27,14 @@
 *.out
 *.app
 
+#Code::Blocks stuff
+*.cbp
+*.depend
+*.layout
+
+#Content
+content/*
+
 # =========================
 # Operating System Files
 # =========================
