@@ -24,7 +24,6 @@ void RenderSystem::update(float elapsedTime)
         int entityID = iter->first;
         RenderComponent* renderComponent = iter->second;
 
-
         std::map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
         if ( it != componentManager->transformComponents.end() )
         {

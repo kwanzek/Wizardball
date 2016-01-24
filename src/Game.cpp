@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <iostream>
 
 Game::Game()
 {
@@ -14,6 +15,8 @@ void Game::init()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
 
+    isRunning = true;
+
     EntityManager* entityManager = new EntityManager();
     this->entityManager = entityManager;
 
@@ -28,6 +31,9 @@ void Game::init()
 
     RenderSystem* renderSystem = new RenderSystem(this->componentManager, this->graphics);
     this->renderSystem = renderSystem;
+
+    InputHandler* inputHandler = new InputHandler(*this);
+    this->inputHandler = inputHandler;
 }
 
 void Game::gameLoop()
@@ -35,31 +41,25 @@ void Game::gameLoop()
     SDL_Event event;
     int lastUpdateTime = SDL_GetTicks();
     entityFactory->createPlayer();
-    while(true)
+
+    while(this->isRunning)
     {
-        if (SDL_PollEvent(&event))
+
+        while (SDL_PollEvent(&event) !=0)
         {
-            if (event.type == SDL_QUIT)
-            {
-                //Need to delete all the components etc. but whatever for now
-                return;
-            }
-            else if (event.type == SDL_KEYDOWN)
-            {
-                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                {
-                    return;
-                }
-            }
+            this->events.push_back(event);
         }
+
         const int currentTime = SDL_GetTicks();
         int elaspedTime = currentTime - lastUpdateTime;
         this->update(elaspedTime);
+        events.clear();
     }
 }
 
 void Game::update(float deltaTime)
 {
+    inputHandler->update(this->events);
     graphics->clearRenderer();
     renderSystem->update(deltaTime);
     graphics->flip();

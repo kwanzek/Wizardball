@@ -29,3 +29,17 @@ RenderComponent* ComponentManager::makeRenderComponent(unsigned int eid, int x, 
     renderComponents.insert(std::make_pair(eid, component));
     return component;
 }
+
+PlayerInputComponent* ComponentManager::makePlayerInputComponent(unsigned int eid, SDL_Scancode jump, SDL_Scancode left, SDL_Scancode right)
+{
+    PlayerInputComponent* component = new PlayerInputComponent(jump, left, right);
+    playerInputComponents.insert(std::make_pair(eid, component));
+    return component;
+}
+
+PlayerControllerComponent* ComponentManager::makePlayerControllerComponent(unsigned int eid)
+{
+    PlayerControllerComponent* component = new PlayerControllerComponent();
+    playerControllerComponents.insert(std::make_pair(eid, component));
+    return component;
+}

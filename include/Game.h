@@ -8,8 +8,12 @@
 #include "EntityManager.h"
 #include "EntityFactory.h"
 #include "ComponentManager.h"
-#include "Systems/RenderSystem.h"
+#include "InputHandler.h"
 #include "Graphics.h"
+
+#include "Systems/RenderSystem.h"
+
+#include <vector>
 
 class Game
 {
@@ -19,6 +23,7 @@ class Game
         void init();
         void gameLoop();
         void update(float deltaTime);
+        bool isRunning;
     protected:
     private:
         EntityManager* entityManager;
@@ -26,6 +31,8 @@ class Game
         ComponentManager* componentManager;
         Graphics* graphics;
         RenderSystem* renderSystem;
+        InputHandler* inputHandler;
+        std::vector<SDL_Event> events;
 
 };
 
