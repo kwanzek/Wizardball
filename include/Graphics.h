@@ -6,7 +6,7 @@
 */
 
 #include <SDL.h>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 struct SDL_Window;
@@ -47,7 +47,7 @@ private:
     SDL_Window* _window;
     SDL_Renderer* _renderer;
 
-    std::map<std::string, SDL_Surface*> _spriteSheets;
+    std::unordered_map<std::string, SDL_Surface*> _spriteSheets;
 };
 
 #endif // GRAPHICS_H

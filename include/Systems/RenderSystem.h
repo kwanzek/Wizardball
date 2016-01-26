@@ -4,15 +4,14 @@
 #include "ComponentManager.h"
 
 #include <iterator>
-#include <map>
 
 class RenderSystem
 {
     public:
         RenderSystem();
         RenderSystem(ComponentManager* componentManager, Graphics* graphics);
-        virtual ~RenderSystem();
-        virtual void update(float elapsedTime);
+        ~RenderSystem();
+        void update(float deltaTime);
         ComponentManager* componentManager;
         Graphics* graphics;
     protected:

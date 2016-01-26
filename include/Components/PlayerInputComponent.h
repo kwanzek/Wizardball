@@ -2,7 +2,6 @@
 #define PLAYERINPUTCOMPONENT_H
 
 #include <SDL.h>
-#include <map>
 
 class PlayerInputComponent
 {

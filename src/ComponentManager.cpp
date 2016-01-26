@@ -43,3 +43,10 @@ PlayerControllerComponent* ComponentManager::makePlayerControllerComponent(unsig
     playerControllerComponents.insert(std::make_pair(eid, component));
     return component;
 }
+
+VelocityComponent* ComponentManager::makeVelocityComponent(unsigned int eid, float dx, float dy)
+{
+    VelocityComponent* component = new VelocityComponent(dx,dy);
+    velocityComponents.insert(std::make_pair(eid, component));
+    return component;
+}

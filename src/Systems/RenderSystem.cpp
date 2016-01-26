@@ -1,4 +1,5 @@
 #include "Systems/RenderSystem.h"
+#include <unordered_map>
 
 RenderSystem::RenderSystem()
 {
@@ -16,15 +17,15 @@ RenderSystem::~RenderSystem()
     //dtor
 }
 
-void RenderSystem::update(float elapsedTime)
+void RenderSystem::update(float deltaTime)
 {
-    for (std::map<unsigned int, RenderComponent*>::iterator iter = componentManager->renderComponents.begin();
+    for (std::unordered_map<unsigned int, RenderComponent*>::iterator iter = componentManager->renderComponents.begin();
         iter != componentManager->renderComponents.end(); iter++)
     {
         int entityID = iter->first;
         RenderComponent* renderComponent = iter->second;
 
-        std::map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
+        std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
         if ( it != componentManager->transformComponents.end() )
         {
             TransformComponent* transformComponent = it->second;

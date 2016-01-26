@@ -17,6 +17,9 @@ void Game::init()
 
     isRunning = true;
 
+    InputHandler* inputHandler = new InputHandler(*this);
+    this->inputHandler = inputHandler;
+
     EntityManager* entityManager = new EntityManager();
     this->entityManager = entityManager;
 
@@ -32,8 +35,12 @@ void Game::init()
     RenderSystem* renderSystem = new RenderSystem(this->componentManager, this->graphics);
     this->renderSystem = renderSystem;
 
-    InputHandler* inputHandler = new InputHandler(*this);
-    this->inputHandler = inputHandler;
+    PlayerControlSystem* playerControlSystem = new PlayerControlSystem(this->componentManager, this->inputHandler);
+    this->playerControlSystem = playerControlSystem;
+
+    MovementSystem* movementSystem = new MovementSystem(this->componentManager);
+    this->movementSystem = movementSystem;
+
 }
 
 void Game::gameLoop()
@@ -50,9 +57,10 @@ void Game::gameLoop()
             this->events.push_back(event);
         }
 
-        const int currentTime = SDL_GetTicks();
-        int elaspedTime = currentTime - lastUpdateTime;
-        this->update(elaspedTime);
+        int currentTime = SDL_GetTicks();
+        int deltaTime = currentTime - lastUpdateTime;
+        lastUpdateTime = currentTime;
+        this->update(deltaTime);
         events.clear();
     }
 }
@@ -62,5 +70,7 @@ void Game::update(float deltaTime)
     inputHandler->update(this->events);
     graphics->clearRenderer();
     renderSystem->update(deltaTime);
+    playerControlSystem->update(deltaTime);
+    movementSystem->update(deltaTime);
     graphics->flip();
 }

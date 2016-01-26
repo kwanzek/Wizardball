@@ -12,6 +12,8 @@
 #include "Graphics.h"
 
 #include "Systems/RenderSystem.h"
+#include "Systems/PlayerControlSystem.h"
+#include "Systems/MovementSystem.h"
 
 #include <vector>
 
@@ -31,6 +33,8 @@ class Game
         ComponentManager* componentManager;
         Graphics* graphics;
         RenderSystem* renderSystem;
+        PlayerControlSystem* playerControlSystem;
+        MovementSystem* movementSystem;
         InputHandler* inputHandler;
         std::vector<SDL_Event> events;
 
