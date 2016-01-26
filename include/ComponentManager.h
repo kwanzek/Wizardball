@@ -33,7 +33,7 @@ class ComponentManager
         RenderComponent* makeRenderComponent(unsigned int eid, int x, int y, int width, int height, std::string texturePath);
         PlayerInputComponent* makePlayerInputComponent(unsigned int eid, SDL_Scancode jump, SDL_Scancode left, SDL_Scancode right);
         PlayerControllerComponent* makePlayerControllerComponent(unsigned int eid);
-        VelocityComponent* makeVelocityComponent(unsigned int eid, float dx, float dy);
+        VelocityComponent* makeVelocityComponent(unsigned int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed);
 
         Graphics* graphics;
 

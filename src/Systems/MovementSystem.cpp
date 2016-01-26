@@ -2,6 +2,10 @@
 #include <unordered_map>
 #include <iterator>
 
+namespace movement_constants {
+    float GRAVITY = 0.003f;
+}
+
 MovementSystem::MovementSystem()
 {
     //ctor
@@ -30,6 +34,10 @@ void MovementSystem::update(float deltaTime)
         {
             TransformComponent* transformComponent = it->second;
             transformComponent->x += velocityComponent->dx * deltaTime;
+            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed)
+            {
+                velocityComponent->dy += movement_constants::GRAVITY * deltaTime;
+            }
             transformComponent->y += velocityComponent->dy * deltaTime;
         }
     }

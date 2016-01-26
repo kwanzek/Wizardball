@@ -44,9 +44,10 @@ PlayerControllerComponent* ComponentManager::makePlayerControllerComponent(unsig
     return component;
 }
 
-VelocityComponent* ComponentManager::makeVelocityComponent(unsigned int eid, float dx, float dy)
+VelocityComponent* ComponentManager::makeVelocityComponent(unsigned int eid, float dx, float dy,
+                                                           float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed)
 {
-    VelocityComponent* component = new VelocityComponent(dx,dy);
+    VelocityComponent* component = new VelocityComponent(dx,dy, maxXSpeedGround, maxXSpeedAir, maxYSpeed);
     velocityComponents.insert(std::make_pair(eid, component));
     return component;
 }

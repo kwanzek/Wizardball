@@ -5,12 +5,14 @@
 class TransformComponent
 {
 public:
-    inline TransformComponent(float x, float y) :
+    inline TransformComponent(float x, float y, bool grounded = false) :
         x(x),
-        y(y)
+        y(y),
+        grounded(grounded)
     {}
     float x;
     float y;
+    bool grounded;
 };
 
 #endif // TRANSFORMCOMPONENT_H
