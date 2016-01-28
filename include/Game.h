@@ -10,6 +10,7 @@
 #include "ComponentManager.h"
 #include "InputHandler.h"
 #include "Graphics.h"
+#include "Level.h"
 
 #include "Systems/RenderSystem.h"
 #include "Systems/PlayerControlSystem.h"
@@ -26,6 +27,8 @@ class Game
         void gameLoop();
         void update(float deltaTime);
         bool isRunning;
+        void loadLevel(std::string levelName);
+        void unloadLevel();
     protected:
     private:
         EntityManager* entityManager;
@@ -36,6 +39,7 @@ class Game
         PlayerControlSystem* playerControlSystem;
         MovementSystem* movementSystem;
         InputHandler* inputHandler;
+        Level* level;
         std::vector<SDL_Event> events;
 
 };

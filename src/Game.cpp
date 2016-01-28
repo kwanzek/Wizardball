@@ -48,6 +48,7 @@ void Game::gameLoop()
     SDL_Event event;
     int lastUpdateTime = SDL_GetTicks();
     entityFactory->createPlayer();
+    this->loadLevel("test");
 
     while(this->isRunning)
     {
@@ -73,4 +74,16 @@ void Game::update(float deltaTime)
     playerControlSystem->update(deltaTime);
     movementSystem->update(deltaTime);
     graphics->flip();
+}
+
+void Game::loadLevel(std::string levelName)
+{
+    this->unloadLevel();
+    level = new Level(this->entityFactory, this->graphics);
+    level->loadLevel(levelName);
+}
+
+void Game::unloadLevel()
+{
+
 }

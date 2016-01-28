@@ -29,3 +29,11 @@ unsigned int EntityFactory::createPlayer()
     _componentManager->makeVelocityComponent(eID, 0, 0, 0.25, 0.15, 0.25);
     return eID;
 }
+
+unsigned int EntityFactory::createTile(std::string texturePath, Vector2 vecSize, Vector2 tilesetPosition, Vector2 tilePosition)
+{
+    unsigned int eID = _entityManager->createEntity();
+    _componentManager->makeTransformComponent(eID, tilePosition.x, tilePosition.y);
+    _componentManager->makeRenderComponent(eID, tilesetPosition.x, tilesetPosition.y, vecSize.x, vecSize.y, texturePath);
+    return eID;
+}
