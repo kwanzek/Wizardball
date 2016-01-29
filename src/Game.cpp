@@ -41,6 +41,9 @@ void Game::init()
     MovementSystem* movementSystem = new MovementSystem(this->componentManager);
     this->movementSystem = movementSystem;
 
+    CollisionSystem* collisionSystem = new CollisionSystem(this->componentManager);
+    this->collisionSystem = collisionSystem;
+
 }
 
 void Game::gameLoop()
@@ -69,10 +72,14 @@ void Game::gameLoop()
 void Game::update(float deltaTime)
 {
     inputHandler->update(this->events);
+
     graphics->clearRenderer();
-    renderSystem->update(deltaTime);
+
     playerControlSystem->update(deltaTime);
+    collisionSystem->update(deltaTime);
     movementSystem->update(deltaTime);
+    renderSystem->update(deltaTime);
+
     graphics->flip();
 }
 

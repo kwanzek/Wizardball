@@ -2,31 +2,38 @@
 #define RECTANGLE_H
 
 #include "Constants.h"
+
 #include <iostream>
+#include <cmath>
 
 class Rectangle
 {
 public:
     Rectangle() {};
     Rectangle(int x, int y, int width, int height) :
-        _x(x),
-        _y(y),
-        _width(width),
-        _height(height)
+        x(x),
+        y(y),
+        width(width),
+        height(height)
     {
 
     }
 
-    const int getCenterX() const { return this->_x + this->_width / 2; }
-    const int getCenterY() const { return this->_y + this->_height / 2; }
+    int x;
+    int y;
+    int width;
+    int height;
 
-    const int getLeft() const { return this->_x; }
-    const int getRight() const { return this->_x + this->_width; }
-    const int getTop() const { return this->_y; }
-    const int getBottom() const { return this->_y + this->_height; }
+    const int getCenterX() const { return this->x + this->width / 2; }
+    const int getCenterY() const { return this->y + this->height / 2; }
 
-    const int getWidth() const { return this->_width; }
-    const int getHeight() const { return this->_height; }
+    const int getLeft() const { return this->x; }
+    const int getRight() const { return this->x + this->width; }
+    const int getTop() const { return this->y; }
+    const int getBottom() const { return this->y + this->height; }
+
+    const int getWidth() const { return this->width; }
+    const int getHeight() const { return this->height; }
 
     const int getSide(const sides::Side side) const
     {
@@ -48,16 +55,46 @@ public:
             this->getBottom() >= other.getTop();
     }
 
+    sides::Side getCollisionSide(const Rectangle &other)
+    {
+      //How far the collision is on each side, the lowest amount is the side we are overlaping on
+        int amtRight;
+        int amtLeft;
+        int amtTop;
+        int amtBottom;
+
+        amtRight = std::abs(this->getRight() - other.getLeft());
+        amtLeft = std::abs(this->getLeft() - other.getRight());
+        amtTop = std::abs(this->getTop() - other.getBottom());
+        amtBottom = std::abs(this->getBottom() - other.getTop());
+
+        if (amtRight <= amtLeft && amtRight <= amtTop && amtRight <= amtBottom)
+        {
+            return sides::RIGHT;
+        }
+        else if (amtLeft <= amtRight && amtLeft <= amtTop && amtLeft <= amtBottom)
+        {
+            return sides::LEFT;
+        }
+        else if (amtBottom <= amtRight && amtBottom <= amtTop && amtBottom <= amtLeft)
+        {
+            return sides::BOTTOM;
+        }
+        else if (amtTop <= amtRight && amtTop <= amtBottom && amtTop <= amtLeft)
+        {
+            return sides::TOP;
+        }
+
+        return sides::NONE;
+    }
+
     const bool isValidRectangle() const
     {
-        return (this->_x >= 0 && this->_y >= 0 && this->_width >= 0 && this->_height >= 0);
+        return (this->x >= 0 && this->y >= 0 && this->width >= 0 && this->height >= 0);
     }
 
 private:
-    int _x;
-    int _y;
-    int _width;
-    int _height;
+
 
 };
 

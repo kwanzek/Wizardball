@@ -9,7 +9,7 @@ class MovementSystem
 {
     public:
         MovementSystem();
-        MovementSystem(ComponentManager* ComponentManager);
+        MovementSystem(ComponentManager* componentManager);
         ~MovementSystem();
         void update(float deltaTime);
         ComponentManager* componentManager;

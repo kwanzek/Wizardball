@@ -55,6 +55,11 @@ void PlayerControlSystem::update(float deltaTime)
             {
                 velocityComponent->dx = 0.0f;
             }
+
+            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed)
+            {
+                velocityComponent->dy += globals::GRAVITY * deltaTime;
+            }
         }
 
     }

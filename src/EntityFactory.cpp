@@ -27,6 +27,7 @@ unsigned int EntityFactory::createPlayer()
     _componentManager->makePlayerInputComponent(eID, SDL_SCANCODE_SPACE, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
     _componentManager->makePlayerControllerComponent(eID);
     _componentManager->makeVelocityComponent(eID, 0, 0, 0.25, 0.15, 0.25);
+    _componentManager->makeCollisionComponent(eID, 100, 100, 16, 16, CollisionLayer::PLAYER);
     return eID;
 }
 
@@ -35,5 +36,6 @@ unsigned int EntityFactory::createTile(std::string texturePath, Vector2 vecSize,
     unsigned int eID = _entityManager->createEntity();
     _componentManager->makeTransformComponent(eID, tilePosition.x, tilePosition.y);
     _componentManager->makeRenderComponent(eID, tilesetPosition.x, tilesetPosition.y, vecSize.x, vecSize.y, texturePath);
+    _componentManager->makeCollisionComponent(eID, tilePosition.x, tilePosition.y, vecSize.x, vecSize.y, CollisionLayer::TILE);
     return eID;
 }

@@ -51,3 +51,10 @@ VelocityComponent* ComponentManager::makeVelocityComponent(unsigned int eid, flo
     velocityComponents.insert(std::make_pair(eid, component));
     return component;
 }
+
+CollisionComponent* ComponentManager::makeCollisionComponent(unsigned int eid, float x, float y, float width, float height, CollisionLayer layer)
+{
+    CollisionComponent* component = new CollisionComponent(x,y,width,height,layer);
+    collisionComponents.insert(std::make_pair(eid, component));
+    return component;
+}
