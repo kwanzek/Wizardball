@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <iterator>
+#include <iostream>
 
 PlayerControlSystem::PlayerControlSystem()
 {
@@ -26,8 +27,7 @@ void PlayerControlSystem::update(float deltaTime)
         iter != componentManager->playerControllerComponents.end(); iter++)
     {
         int entityID = iter->first;
-        //Will need later to check state etc.
-        //PlayerControllerComponent* playerControllerComponent = iter->second;
+        PlayerControllerComponent* playerControllerComponent = iter->second;
 
         //Need to get VelocityComponent and PlayerInput to move the player if there is input
         std::unordered_map<unsigned int, VelocityComponent*>::iterator velocityIt = componentManager->velocityComponents.find(entityID);
@@ -56,9 +56,14 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent->dx = 0.0f;
             }
 
-            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed)
+            if (inputHandler->wasKeyPressed(playerInputComponent->jumpCommand))
             {
-                velocityComponent->dy += globals::GRAVITY * deltaTime;
+                std::cout << "My grounded is : " << transformComponent->grounded << ", dy " << velocityComponent->dy << std::endl;
+            }
+            if (transformComponent->grounded && velocityComponent->dy == 0 && inputHandler->wasKeyPressed(playerInputComponent->jumpCommand))
+            {
+                velocityComponent->dy = -1 * playerControllerComponent->jumpForce;
+                std::cout <<"HELLO, " <<velocityComponent->dy << std::endl;
             }
         }
 

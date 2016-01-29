@@ -32,6 +32,7 @@ void CollisionSystem::update(float deltaTime)
             //Need to get the velocity and transform components
 
             TransformComponent* transformComponent;
+            bool hasGroundedCollision = false;
             std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
             if (it != componentManager->transformComponents.end())
             {
@@ -80,30 +81,34 @@ void CollisionSystem::update(float deltaTime)
 
                         if (collisionSide == sides::TOP)
                         {
-                            velocityComponent->dy = std::min(static_cast<int>(velocityComponent->dy),
-                                otherCollision->boundingBox.getBottom() - collisionComponent->boundingBox.getTop());
+                            velocityComponent->dy = std::max(velocityComponent->dy,
+                                static_cast<float>(otherCollision->boundingBox.getBottom() - collisionComponent->boundingBox.getTop()));
                         }
                         else if (collisionSide == sides::BOTTOM)
                         {
-                            velocityComponent->dy = std::max(static_cast<int>(velocityComponent->dy),
-                                otherCollision->boundingBox.getTop() - collisionComponent->boundingBox.getBottom());
-                            transformComponent->grounded = true;
+
+                            velocityComponent->dy = std::min(velocityComponent->dy,
+                                static_cast<float>(otherCollision->boundingBox.getTop() - collisionComponent->boundingBox.getBottom()));
+                            hasGroundedCollision = true;
                         }
                         else if (collisionSide == sides::LEFT)
                         {
-                            velocityComponent->dx = std::min(static_cast<int>(velocityComponent->dx),
-                                otherCollision->boundingBox.getRight() - collisionComponent->boundingBox.getLeft()+1);
+                            velocityComponent->dx = std::max(velocityComponent->dx,
+                                static_cast<float>(otherCollision->boundingBox.getRight() - collisionComponent->boundingBox.getLeft()));
                         }
                         else if (collisionSide == sides::RIGHT)
                         {
-                            velocityComponent->dx = std::max(static_cast<int>(velocityComponent->dx),
-                                otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight()-1);
+                            std::cout << otherCollision->boundingBox.getLeft() << ", " << otherCollision->boundingBox.getTop() << ",  :" <<
+                                collisionComponent->boundingBox.getRight() << ", " << collisionComponent->boundingBox.getBottom() << std::endl;
+                            velocityComponent->dx = std::min(velocityComponent->dx,
+                                static_cast<float>(otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight()));
                         }
                     }
 
                 }
 
             }
+            transformComponent->grounded = hasGroundedCollision;
         }
 
 

@@ -68,21 +68,21 @@ public:
         amtTop = std::abs(this->getTop() - other.getBottom());
         amtBottom = std::abs(this->getBottom() - other.getTop());
 
-        if (amtRight <= amtLeft && amtRight <= amtTop && amtRight <= amtBottom)
+        if (amtTop <= amtRight && amtTop <= amtBottom && amtTop <= amtLeft)
         {
-            return sides::RIGHT;
-        }
-        else if (amtLeft <= amtRight && amtLeft <= amtTop && amtLeft <= amtBottom)
-        {
-            return sides::LEFT;
+            return sides::TOP;
         }
         else if (amtBottom <= amtRight && amtBottom <= amtTop && amtBottom <= amtLeft)
         {
             return sides::BOTTOM;
         }
-        else if (amtTop <= amtRight && amtTop <= amtBottom && amtTop <= amtLeft)
+        else if (amtLeft <= amtRight && amtLeft <= amtTop && amtLeft <= amtBottom)
         {
-            return sides::TOP;
+            return sides::LEFT;
+        }
+        else if (amtRight <= amtLeft && amtRight <= amtTop && amtRight <= amtBottom)
+        {
+            return sides::RIGHT;
         }
 
         return sides::NONE;

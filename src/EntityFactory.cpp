@@ -26,7 +26,7 @@ unsigned int EntityFactory::createPlayer()
     _componentManager->makeRenderComponent(eID, 0, 0, 16, 16, "content/sprites/MyChar.png");
     _componentManager->makePlayerInputComponent(eID, SDL_SCANCODE_SPACE, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
     _componentManager->makePlayerControllerComponent(eID);
-    _componentManager->makeVelocityComponent(eID, 0, 0, 0.25, 0.15, 0.25);
+    _componentManager->makeVelocityComponent(eID, 0, 0, .25, .15, .25);
     _componentManager->makeCollisionComponent(eID, 100, 100, 16, 16, CollisionLayer::PLAYER);
     return eID;
 }

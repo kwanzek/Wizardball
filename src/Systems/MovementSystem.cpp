@@ -30,6 +30,11 @@ void MovementSystem::update(float deltaTime)
         {
             TransformComponent* transformComponent = it->second;
             transformComponent->x += velocityComponent->dx * deltaTime;
+            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed)
+            {
+                velocityComponent->dy += globals::GRAVITY * deltaTime;
+            }
+
             transformComponent->y += velocityComponent->dy * deltaTime;
 
             std::unordered_map<unsigned int, CollisionComponent*>::iterator collisionIt = componentManager->collisionComponents.find(entityID);
