@@ -11,7 +11,7 @@ public:
         JUMPING
     };
     PlayerState state;
-    float jumpForce = 0.005f;
+    float jumpForce = 150.f;
 };
 
 #endif // PLAYERCONTROLLERCOMPONENT_H

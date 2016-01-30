@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <iterator>
 #include <iostream>
+#include <cmath>
 
 PlayerControlSystem::PlayerControlSystem()
 {
@@ -56,14 +57,19 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent->dx = 0.0f;
             }
 
-            if (inputHandler->wasKeyPressed(playerInputComponent->jumpCommand))
+            if (velocityComponent->currentIgnoreGravityTime < 0)
             {
-                std::cout << "My grounded is : " << transformComponent->grounded << ", dy " << velocityComponent->dy << std::endl;
+                velocityComponent->currentIgnoreGravityTime = 0;
             }
+            else
+            {
+                velocityComponent->currentIgnoreGravityTime -= deltaTime;
+            }
+
             if (transformComponent->grounded && velocityComponent->dy == 0 && inputHandler->wasKeyPressed(playerInputComponent->jumpCommand))
             {
                 velocityComponent->dy = -1 * playerControllerComponent->jumpForce;
-                std::cout <<"HELLO, " <<velocityComponent->dy << std::endl;
+                velocityComponent->currentIgnoreGravityTime = velocityComponent->baseIgnoreGravityTime;
             }
         }
 

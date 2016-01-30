@@ -8,7 +8,7 @@ namespace globals
     const int SCREEN_WIDTH = 1280;
     const int SCREEN_HEIGHT = 960;
     const int MAX_OBJECTS = 65000;
-    const float GRAVITY = 0.003;
+    const float GRAVITY = 1000.0f;
     const std::string GAME_NAME = "Wizardball";
 }
 

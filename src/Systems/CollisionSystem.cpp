@@ -67,8 +67,8 @@ void CollisionSystem::update(float deltaTime)
                 {
                     //Check bounding box collision, adding player dX and dY
                     Rectangle newPos = Rectangle(
-                        collisionComponent->boundingBox.getLeft() + velocityComponent->dx,
-                        collisionComponent->boundingBox.getTop() + velocityComponent->dy,
+                        collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime,
+                        collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime,
                         collisionComponent->boundingBox.getWidth(),
                         collisionComponent->boundingBox.getHeight()
                     );
@@ -98,8 +98,6 @@ void CollisionSystem::update(float deltaTime)
                         }
                         else if (collisionSide == sides::RIGHT)
                         {
-                            std::cout << otherCollision->boundingBox.getLeft() << ", " << otherCollision->boundingBox.getTop() << ",  :" <<
-                                collisionComponent->boundingBox.getRight() << ", " << collisionComponent->boundingBox.getBottom() << std::endl;
                             velocityComponent->dx = std::min(velocityComponent->dx,
                                 static_cast<float>(otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight()));
                         }

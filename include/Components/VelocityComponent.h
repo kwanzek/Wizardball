@@ -17,6 +17,8 @@ public:
     float maxXSpeedGround;
     float maxXSpeedAir;
     float maxYSpeed;
+    float baseIgnoreGravityTime = 0.3f;
+    float currentIgnoreGravityTime = 0;
 };
 
 #endif // VELOCITYCOMPONENT_H

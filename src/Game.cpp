@@ -62,7 +62,7 @@ void Game::gameLoop()
         }
 
         int currentTime = SDL_GetTicks();
-        float deltaTime = currentTime - lastUpdateTime;
+        float deltaTime = (currentTime - lastUpdateTime) / 1000.0f;
         lastUpdateTime = currentTime;
         this->update(deltaTime);
         events.clear();
