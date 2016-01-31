@@ -22,7 +22,7 @@ EntityFactory::~EntityFactory()
 unsigned int EntityFactory::createPlayer()
 {
     unsigned int eID = _entityManager->createEntity();
-    _componentManager->makeTransformComponent(eID, 100, 100);
+    _componentManager->makeTransformComponent(eID, 300, 100);
     _componentManager->makeRenderComponent(eID, 0, 0, 16, 16, "content/sprites/MyChar.png");
     _componentManager->makePlayerInputComponent(eID, SDL_SCANCODE_SPACE, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT);
     _componentManager->makePlayerControllerComponent(eID);

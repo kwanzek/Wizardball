@@ -19,6 +19,7 @@ public:
     float maxYSpeed;
     float baseIgnoreGravityTime = 0.3f;
     float currentIgnoreGravityTime = 0;
+    float ignoreGravityKeyDelta = 0.03f;
 };
 
 #endif // VELOCITYCOMPONENT_H

@@ -1,6 +1,7 @@
 #include "MovementSystem.h"
 #include <unordered_map>
 #include <iterator>
+#include <math.h>
 
 MovementSystem::MovementSystem()
 {
@@ -41,8 +42,8 @@ void MovementSystem::update(float deltaTime)
             if (collisionIt != componentManager->collisionComponents.end())
             {
                 CollisionComponent* collisionComponent = collisionIt->second;
-                collisionComponent->boundingBox.x = transformComponent->x;
-                collisionComponent->boundingBox.y = transformComponent->y;
+                collisionComponent->boundingBox.x = ceil(transformComponent->x);
+                collisionComponent->boundingBox.y = ceil(transformComponent->y);
             }
         }
 

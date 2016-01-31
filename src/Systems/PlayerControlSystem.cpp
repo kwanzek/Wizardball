@@ -61,7 +61,7 @@ void PlayerControlSystem::update(float deltaTime)
             {
                 velocityComponent->currentIgnoreGravityTime = 0;
             }
-            else
+            else if (velocityComponent != 0)
             {
                 velocityComponent->currentIgnoreGravityTime -= deltaTime;
             }

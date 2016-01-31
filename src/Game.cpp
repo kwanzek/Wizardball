@@ -1,6 +1,6 @@
 #include "Game.h"
 #include <iostream>
-
+#include <cmath>
 Game::Game()
 {
     //ctor
@@ -62,7 +62,7 @@ void Game::gameLoop()
         }
 
         int currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - lastUpdateTime) / 1000.0f;
+        float deltaTime = std::min((currentTime - lastUpdateTime) / 1000.0f, 0.016f);
         lastUpdateTime = currentTime;
         this->update(deltaTime);
         events.clear();

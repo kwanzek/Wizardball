@@ -50,6 +50,13 @@ void CollisionSystem::update(float deltaTime)
             {
                 continue;
             }
+            //Check bounding box collision, adding player dX and dY
+            Rectangle newPos = Rectangle(
+                collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime,
+                collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime,
+                collisionComponent->boundingBox.getWidth(),
+                collisionComponent->boundingBox.getHeight()
+            );
 
             for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
                 otherIter != componentManager->collisionComponents.end(); otherIter++)
@@ -65,14 +72,45 @@ void CollisionSystem::update(float deltaTime)
 
                 if (otherCollision->layer == CollisionLayer::TILE && otherTransform != NULL)
                 {
-                    //Check bounding box collision, adding player dX and dY
-                    Rectangle newPos = Rectangle(
-                        collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime,
-                        collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime,
-                        collisionComponent->boundingBox.getWidth(),
-                        collisionComponent->boundingBox.getHeight()
-                    );
 
+
+                    if (newPos.collidesWith(otherCollision->boundingBox))
+                    {
+                        sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
+                        //We want to limit the entity's dy and dx based on which side the collision happened
+                        //And how far we can go
+
+                        if (collisionSide == sides::LEFT)
+                        {
+                            velocityComponent->dx = std::max(velocityComponent->dx,
+                                static_cast<float>(otherCollision->boundingBox.getRight() - collisionComponent->boundingBox.getLeft())+1);
+                        }
+                        else if (collisionSide == sides::RIGHT)
+                        {
+                            velocityComponent->dx = std::min(velocityComponent->dx,
+                                static_cast<float>(otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight())-1);
+                        }
+                        newPos.x = collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime;
+                    }
+
+                }
+
+            }
+
+            for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
+                otherIter != componentManager->collisionComponents.end(); otherIter++)
+            {
+                int otherEntityID = otherIter->first;
+                CollisionComponent* otherCollision = otherIter->second;
+                std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
+                TransformComponent* otherTransform;
+                if (otherIt != componentManager->transformComponents.end())
+                {
+                    otherTransform = it->second;
+                }
+
+                if (otherCollision->layer == CollisionLayer::TILE && otherTransform != NULL)
+                {
                     if (newPos.collidesWith(otherCollision->boundingBox))
                     {
                         sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
@@ -86,21 +124,11 @@ void CollisionSystem::update(float deltaTime)
                         }
                         else if (collisionSide == sides::BOTTOM)
                         {
-
                             velocityComponent->dy = std::min(velocityComponent->dy,
                                 static_cast<float>(otherCollision->boundingBox.getTop() - collisionComponent->boundingBox.getBottom()));
                             hasGroundedCollision = true;
                         }
-                        else if (collisionSide == sides::LEFT)
-                        {
-                            velocityComponent->dx = std::max(velocityComponent->dx,
-                                static_cast<float>(otherCollision->boundingBox.getRight() - collisionComponent->boundingBox.getLeft()));
-                        }
-                        else if (collisionSide == sides::RIGHT)
-                        {
-                            velocityComponent->dx = std::min(velocityComponent->dx,
-                                static_cast<float>(otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight()));
-                        }
+                        newPos.y = collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime;
                     }
 
                 }
