@@ -49,38 +49,57 @@ void Game::init()
 void Game::gameLoop()
 {
     SDL_Event event;
-    int lastUpdateTime = SDL_GetTicks();
     entityFactory->createPlayer();
     this->loadLevel("test");
+
+    float dt = 0.01f;
+    float accumulator = 0.f;
+
+    int currentTimeMS = SDL_GetTicks();
+    int lastUpdateTimeMS = currentTimeMS;
 
     while(this->isRunning)
     {
 
-        while (SDL_PollEvent(&event) !=0)
-        {
-            this->events.push_back(event);
-        }
+        lastUpdateTimeMS = currentTimeMS;
+        currentTimeMS = SDL_GetTicks();
+        float deltaTime = std::min((currentTimeMS - lastUpdateTimeMS) / 1000.0f, 0.016f);
+        accumulator += deltaTime;
 
-        int currentTime = SDL_GetTicks();
-        float deltaTime = std::min((currentTime - lastUpdateTime) / 1000.0f, 0.016f);
-        lastUpdateTime = currentTime;
-        this->update(deltaTime);
-        events.clear();
+        while (accumulator >= dt)
+        {
+            while (SDL_PollEvent(&event) !=0)
+            {
+                this->events.push_back(event);
+            }
+            inputHandler->update(this->events);
+            playerControlSystem->update(dt);
+            collisionSystem->update(dt);
+            movementSystem->update(dt);
+            inputHandler->beginNewFrame();
+            events.clear();
+            accumulator -= dt;
+        }
+        //For now the game is fast enough that I don't need to worry about interpolating the graphics, I can just render them
+        //But later I will need to figure out how to integrate state properly, likely holding an Int that is "numStateUpdates"
+        //And then I can get the alpha between this state and the next state with the rest of accumulator
+        graphics->clearRenderer();
+        renderSystem->update(deltaTime);
+        graphics->flip();
+
     }
 }
 
 void Game::update(float deltaTime)
 {
-    inputHandler->update(this->events);
+
 
     graphics->clearRenderer();
 
-    playerControlSystem->update(deltaTime);
-    collisionSystem->update(deltaTime);
-    movementSystem->update(deltaTime);
+
     renderSystem->update(deltaTime);
 
-    inputHandler->beginNewFrame();
+
     graphics->flip();
 }
 
