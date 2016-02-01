@@ -21,11 +21,20 @@ TransformComponent* ComponentManager::makeTransformComponent(unsigned int eid, f
     return component;
 }
 
-RenderComponent* ComponentManager::makeRenderComponent(unsigned int eid, int x, int y, int width, int height, std::string texturePath)
+RenderComponent* ComponentManager::makeRenderComponent(
+    unsigned int eid,
+    int x,
+    int y,
+    int width,
+    int height,
+    std::string texturePath,
+    bool animated,
+    std::unordered_map<std::string, std::vector<SDL_Rect>> animations
+    )
 {
     SDL_Rect sourceRect = { x, y, width, height };
     SDL_Texture* spriteSheet = SDL_CreateTextureFromSurface(graphics->getRenderer(), graphics->loadImage(texturePath));
-    RenderComponent* component = new RenderComponent(sourceRect, spriteSheet);
+    RenderComponent* component = new RenderComponent(sourceRect, spriteSheet, animated, animations);
     renderComponents.insert(std::make_pair(eid, component));
     return component;
 }

@@ -7,6 +7,8 @@
 
 #include <SDL.h>
 #include <string>
+#include <vector>
+#include <unordered_map>
 
 class EntityFactory
 {

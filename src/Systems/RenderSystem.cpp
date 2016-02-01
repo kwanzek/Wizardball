@@ -26,6 +26,11 @@ void RenderSystem::update(float deltaTime)
         int entityID = iter->first;
         RenderComponent* renderComponent = iter->second;
 
+        if (renderComponent->isAnimated)
+        {
+            //Get the StateComponent, get the current state, update the frame, frame time, frame index etc. and the sourceRect
+        }
+
         std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
         if ( it != componentManager->transformComponents.end() )
         {
