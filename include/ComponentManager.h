@@ -11,6 +11,7 @@
 #include "Components/PlayerControllerComponent.h"
 #include "Components/VelocityComponent.h"
 #include "Components/CollisionComponent.h"
+#include "Components/StateComponent.h"
 
 #include "Graphics.h"
 
@@ -32,12 +33,13 @@ class ComponentManager
         std::unordered_map<unsigned int, PlayerControllerComponent *> playerControllerComponents;
         std::unordered_map<unsigned int, VelocityComponent *> velocityComponents;
         std::unordered_map<unsigned int, CollisionComponent *> collisionComponents;
+        std::unordered_map<unsigned int, StateComponent *> stateComponents;
 
         TransformComponent* makeTransformComponent(unsigned int eid, float x, float y);
         PlayerInputComponent* makePlayerInputComponent(unsigned int eid, SDL_Scancode jump, SDL_Scancode left, SDL_Scancode right);
         PlayerControllerComponent* makePlayerControllerComponent(unsigned int eid);
         VelocityComponent* makeVelocityComponent(unsigned int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed);
-        CollisionComponent* makeCollisionComponent(unsigned int eid, float x, float y, float width, float height, CollisionLayer layer);
+        CollisionComponent* makeCollisionComponent(unsigned int eid, float x, float y, float width, float height, CollisionLayer::Layer layer);
 
         RenderComponent* makeRenderComponent(
             unsigned int eid,
@@ -47,8 +49,12 @@ class ComponentManager
             int height,
             std::string texturePath,
             bool animated = false,
-            std::unordered_map<std::string, std::vector<SDL_Rect>> animations = std::unordered_map<std::string, std::vector<SDL_Rect>>()
+            std::unordered_map<std::string, std::vector<SDL_Rect>> animations = std::unordered_map<std::string, std::vector<SDL_Rect>>(),
+            std::string currentAnimation = "",
+            float timeToUpdate = 1.f
         );
+
+        StateComponent* makeStateComponent(unsigned int eid, std::string string);
 
         Graphics* graphics;
 

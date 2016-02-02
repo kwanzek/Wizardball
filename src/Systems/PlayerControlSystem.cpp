@@ -34,27 +34,36 @@ void PlayerControlSystem::update(float deltaTime)
         std::unordered_map<unsigned int, VelocityComponent*>::iterator velocityIt = componentManager->velocityComponents.find(entityID);
         std::unordered_map<unsigned int, PlayerInputComponent*>::iterator playerInputIt = componentManager->playerInputComponents.find(entityID);
         std::unordered_map<unsigned int, TransformComponent*>::iterator transformIt = componentManager->transformComponents.find(entityID);
+        std::unordered_map<unsigned int, StateComponent*>::iterator stateIt = componentManager->stateComponents.find(entityID);
 
         if (velocityIt != componentManager->velocityComponents.end()
             && playerInputIt != componentManager->playerInputComponents.end()
-            && transformIt != componentManager->transformComponents.end())
+            && transformIt != componentManager->transformComponents.end()
+            && stateIt != componentManager->stateComponents.end())
         {
             PlayerInputComponent* playerInputComponent = playerInputIt->second;
             VelocityComponent* velocityComponent = velocityIt->second;
             TransformComponent* transformComponent = transformIt->second;
+            StateComponent* stateComponent = stateIt->second;
 
             float targetDX = transformComponent->grounded ? velocityComponent->maxXSpeedGround : velocityComponent->maxXSpeedAir;
+
             if (inputHandler->isKeyHeld(playerInputComponent->leftCommand))
             {
                 velocityComponent->dx = -1 * targetDX;
+                transformComponent->facing = Direction::Facing::LEFT;
+                stateComponent->state = "run";
             }
             else if (inputHandler->isKeyHeld(playerInputComponent->rightCommand))
             {
                 velocityComponent->dx = targetDX;
+                transformComponent->facing = Direction::Facing::RIGHT;
+                stateComponent->state = "run";
             }
             else
             {
                 velocityComponent->dx = 0.0f;
+                stateComponent->state = "idle";
             }
 
             if (velocityComponent->currentIgnoreGravityTime < 0)

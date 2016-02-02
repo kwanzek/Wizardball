@@ -17,27 +17,29 @@ public:
         bool isAnimated = false,
         std::unordered_map<std::string, std::vector<SDL_Rect>> animations =
             std::unordered_map<std::string, std::vector<SDL_Rect>>(),
-        int frameIndex = 0,
-        float timeElapsed = 0.f,
-        bool isVisible = true
+        std::string currentAnimation = "",
+        float timeToUpdate = 1.f,
+        bool isVisible = true,
+        int frameIndex = 0
     ) :
         sourceRect(sourceRect),
         spriteSheet(spriteSheet),
         isAnimated(isAnimated),
         animations(animations),
-        frameIndex(frameIndex),
-        timeElapsed(timeElapsed),
-        isVisible(isVisible)
+        currentAnimation(currentAnimation),
+        timeToUpdate(timeToUpdate),
+        isVisible(isVisible),
+        frameIndex(frameIndex)
     {}
     SDL_Rect sourceRect;
     SDL_Texture* spriteSheet;
     bool isAnimated;
     std::unordered_map<std::string, std::vector<SDL_Rect> > animations;
-
-    int frameIndex;
-    float timeElapsed;
+    std::string currentAnimation;
+    float timeToUpdate;
     bool isVisible;
-
+    int frameIndex;
+    float timeElapsed = 0.f;
 };
 
 #endif // RENDERCOMPONENT_H

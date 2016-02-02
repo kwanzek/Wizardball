@@ -34,19 +34,26 @@ namespace sides
     }
 }
 
-enum CollisionLayer
+namespace CollisionLayer
 {
-    TILE,
-    PLAYER,
-    NONE
-};
+    enum Layer
+    {
+        TILE,
+        PLAYER,
+        NONE
+    };
 
-enum Direction
-{
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN
-};
+}
+
+namespace Direction {
+    enum Facing
+    {
+        NONE,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    };
+}
 
 #endif

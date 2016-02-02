@@ -8,13 +8,13 @@ class CollisionComponent
 {
 public:
 
-    inline CollisionComponent(float x, float y, float width, float height, CollisionLayer layer)
+    inline CollisionComponent(float x, float y, float width, float height, CollisionLayer::Layer layer)
     {
         this->layer = layer;
         boundingBox = { static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height) };
     };
 
-    CollisionLayer layer;
+    CollisionLayer::Layer layer;
     Rectangle boundingBox;
 };
 

@@ -12,6 +12,7 @@ class RenderSystem
         RenderSystem(ComponentManager* componentManager, Graphics* graphics);
         ~RenderSystem();
         void update(float deltaTime);
+        void playAnimation(float deltaTime, RenderComponent& renderComponent, StateComponent& stateComponent);
         ComponentManager* componentManager;
         Graphics* graphics;
     protected:

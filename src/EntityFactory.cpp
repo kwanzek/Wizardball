@@ -28,32 +28,22 @@ unsigned int EntityFactory::createPlayer()
     _componentManager->makeVelocityComponent(eID, 0, 0, 140, 100, 500);
     _componentManager->makeCollisionComponent(eID, 100, 100, 16, 16, CollisionLayer::PLAYER);
 
-    //Setupanimations
+    //Setup animations
 
     std::unordered_map<std::string, std::vector<SDL_Rect>> animations;
-    std::vector<SDL_Rect> run_left;
-    run_left.push_back( SDL_Rect {0, 0, 16, 16 });
-    run_left.push_back( SDL_Rect {16, 0, 16, 16 });
-    run_left.push_back( SDL_Rect {0, 0, 16, 16 });
-    run_left.push_back( SDL_Rect {32, 0, 16, 16 });
-    animations.insert(std::pair<std::string, std::vector<SDL_Rect>>("run_left", run_left));
+    std::vector<SDL_Rect> run;
+    run.push_back( SDL_Rect {0, 16, 16, 16 });
+    run.push_back( SDL_Rect {16, 16, 16, 16 });
+    run.push_back( SDL_Rect {0, 16, 16, 16 });
+    run.push_back( SDL_Rect {32, 16, 16, 16 });
+    animations.insert(std::pair<std::string, std::vector<SDL_Rect>>("run", run));
 
-    std::vector<SDL_Rect> run_right;
-    run_right.push_back( SDL_Rect {0, 16, 16, 16 });
-    run_right.push_back( SDL_Rect {16, 16, 16, 16 });
-    run_right.push_back( SDL_Rect {0, 16, 16, 16 });
-    run_right.push_back( SDL_Rect {32, 16, 16, 16 });
-    animations.insert(std::pair<std::string, std::vector<SDL_Rect>>("run_right", run_right));
+    std::vector<SDL_Rect> idle;
+    idle.push_back( SDL_Rect {0, 16, 16, 16 });
+    animations.insert(std::pair<std::string, std::vector<SDL_Rect>>("idle", idle));
 
-    std::vector<SDL_Rect> idle_left;
-    idle_left.push_back( SDL_Rect {0, 0, 16, 16 });
-    animations.insert(std::pair<std::string, std::vector<SDL_Rect>>("idle_left", idle_left));
-
-    std::vector<SDL_Rect> idle_right;
-    idle_right.push_back( SDL_Rect {0, 16, 16, 16 });
-    animations.insert(std::pair<std::string, std::vector<SDL_Rect>>("idle_right", idle_right));
-
-    _componentManager->makeRenderComponent(eID, 0, 0, 16, 16, "content/sprites/MyChar.png", true, animations);
+    _componentManager->makeRenderComponent(eID, 0, 0, 16, 16, "content/sprites/MyChar.png", true, animations, "idle", .1f);
+    _componentManager->makeStateComponent(eID, "idle");
     return eID;
 }
 
