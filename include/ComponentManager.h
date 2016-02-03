@@ -36,9 +36,22 @@ class ComponentManager
         std::unordered_map<unsigned int, StateComponent *> stateComponents;
 
         TransformComponent* makeTransformComponent(unsigned int eid, float x, float y);
-        PlayerInputComponent* makePlayerInputComponent(unsigned int eid, SDL_Scancode jump, SDL_Scancode left, SDL_Scancode right);
+        PlayerInputComponent* makePlayerInputComponent(
+            unsigned int eid,
+            SDL_Scancode jump,
+            SDL_Scancode left,
+            SDL_Scancode right,
+            SDL_Scancode fireball
+        );
         PlayerControllerComponent* makePlayerControllerComponent(unsigned int eid);
-        VelocityComponent* makeVelocityComponent(unsigned int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed);
+        VelocityComponent* makeVelocityComponent(
+            unsigned int eid,
+            float dx,
+            float dy,
+            float maxXSpeedGround = 0,
+            float maxXSpeedAir = 0,
+            float maxYSpeed = 0
+        );
         CollisionComponent* makeCollisionComponent(unsigned int eid, float x, float y, float width, float height, CollisionLayer::Layer layer);
 
         RenderComponent* makeRenderComponent(

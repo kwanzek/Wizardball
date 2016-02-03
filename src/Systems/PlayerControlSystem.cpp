@@ -10,8 +10,9 @@ PlayerControlSystem::PlayerControlSystem()
     //ctor
 }
 
-PlayerControlSystem::PlayerControlSystem(ComponentManager* componentManager, InputHandler* inputHandler) :
+PlayerControlSystem::PlayerControlSystem(ComponentManager* componentManager, EntityFactory* entityFactory, InputHandler* inputHandler) :
     componentManager(componentManager),
+    entityFactory(entityFactory),
     inputHandler(inputHandler)
 {
 
@@ -81,6 +82,16 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent->dy = -1 * playerControllerComponent->jumpForce;
                 velocityComponent->ignoreGravity = true;
                 velocityComponent->currentIgnoreGravityTime = velocityComponent->baseIgnoreGravityTime;
+            }
+
+            if (inputHandler->wasKeyPressed(playerInputComponent->fireballCommand))
+            {
+                float fireballSpeed = 100;
+                if (transformComponent->facing == Direction::Facing::LEFT)
+                {
+                    fireballSpeed *= -1;
+                }
+                entityFactory->createFireball(Vector2(transformComponent->x, transformComponent->y), fireballSpeed, 0);
             }
 
         }

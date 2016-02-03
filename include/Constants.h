@@ -40,6 +40,7 @@ namespace CollisionLayer
     {
         TILE,
         PLAYER,
+        PROJECTILE,
         NONE
     };
 

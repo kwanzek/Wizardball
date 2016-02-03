@@ -18,6 +18,7 @@ class EntityFactory
         virtual ~EntityFactory();
         unsigned int createPlayer();
         unsigned int createTile(std::string texturePath, Vector2 vecSize, Vector2 tilesetPosition, Vector2 tilePosition);
+        unsigned int createFireball(Vector2 position, float dx, float dy);
     protected:
     private:
         EntityManager* _entityManager;

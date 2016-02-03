@@ -3,16 +3,18 @@
 
 #include "ComponentManager.h"
 #include "InputHandler.h"
+#include "EntityFactory.h"
 #include "Constants.h"
 
 class PlayerControlSystem
 {
     public:
         PlayerControlSystem();
-        PlayerControlSystem(ComponentManager* componentManager, InputHandler* inputHandler);
+        PlayerControlSystem(ComponentManager* componentManager, EntityFactory* entityFactory, InputHandler* inputHandler);
         ~PlayerControlSystem();
         void update(float deltaTime);
         ComponentManager* componentManager;
+        EntityFactory* entityFactory;
         InputHandler* inputHandler;
     protected:
     private:

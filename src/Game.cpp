@@ -35,7 +35,7 @@ void Game::init()
     RenderSystem* renderSystem = new RenderSystem(this->componentManager, this->graphics);
     this->renderSystem = renderSystem;
 
-    PlayerControlSystem* playerControlSystem = new PlayerControlSystem(this->componentManager, this->inputHandler);
+    PlayerControlSystem* playerControlSystem = new PlayerControlSystem(this->componentManager, this->entityFactory, this->inputHandler);
     this->playerControlSystem = playerControlSystem;
 
     MovementSystem* movementSystem = new MovementSystem(this->componentManager);

@@ -41,9 +41,15 @@ RenderComponent* ComponentManager::makeRenderComponent(
     return component;
 }
 
-PlayerInputComponent* ComponentManager::makePlayerInputComponent(unsigned int eid, SDL_Scancode jump, SDL_Scancode left, SDL_Scancode right)
+PlayerInputComponent* ComponentManager::makePlayerInputComponent(
+    unsigned int eid,
+    SDL_Scancode jump,
+    SDL_Scancode left,
+    SDL_Scancode right,
+    SDL_Scancode fireball
+    )
 {
-    PlayerInputComponent* component = new PlayerInputComponent(jump, left, right);
+    PlayerInputComponent* component = new PlayerInputComponent(jump, left, right, fireball);
     playerInputComponents.insert(std::make_pair(eid, component));
     return component;
 }
