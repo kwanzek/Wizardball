@@ -60,17 +60,18 @@ void PlayerControlSystem::update(float deltaTime)
                 transformComponent->facing = Direction::Facing::RIGHT;
                 stateComponent->state = "run";
             }
-            else
+            else if (velocityComponent->dy == 0)
             {
                 velocityComponent->dx = 0.0f;
                 stateComponent->state = "idle";
             }
 
-            if (velocityComponent->currentIgnoreGravityTime < 0)
+            if (velocityComponent->currentIgnoreGravityTime <= 0 || !inputHandler->isKeyHeld(playerInputComponent->jumpCommand))
             {
                 velocityComponent->currentIgnoreGravityTime = 0;
+                velocityComponent->ignoreGravity = false;
             }
-            else if (velocityComponent != 0)
+            else if (velocityComponent->dy != 0)
             {
                 velocityComponent->currentIgnoreGravityTime -= deltaTime;
             }
@@ -78,8 +79,10 @@ void PlayerControlSystem::update(float deltaTime)
             if (transformComponent->grounded && velocityComponent->dy == 0 && inputHandler->wasKeyPressed(playerInputComponent->jumpCommand))
             {
                 velocityComponent->dy = -1 * playerControllerComponent->jumpForce;
+                velocityComponent->ignoreGravity = true;
                 velocityComponent->currentIgnoreGravityTime = velocityComponent->baseIgnoreGravityTime;
             }
+
         }
 
     }

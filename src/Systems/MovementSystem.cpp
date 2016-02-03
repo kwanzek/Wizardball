@@ -31,7 +31,7 @@ void MovementSystem::update(float deltaTime)
         {
             TransformComponent* transformComponent = it->second;
             transformComponent->x += velocityComponent->dx * deltaTime;
-            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed && velocityComponent->currentIgnoreGravityTime <= 0)
+            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed && !velocityComponent->ignoreGravity)
             {
                 velocityComponent->dy += globals::GRAVITY * deltaTime;
             }
