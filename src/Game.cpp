@@ -14,8 +14,8 @@ Game::~Game()
 void Game::init()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-
     isRunning = true;
+    gameState = GameState::GAMEPLAY;
 
     InputHandler* inputHandler = new InputHandler(*this);
     this->inputHandler = inputHandler;
@@ -58,6 +58,15 @@ void Game::gameLoop()
     int currentTimeMS = SDL_GetTicks();
     int lastUpdateTimeMS = currentTimeMS;
 
+    //This isn't the final implementation, each space should have their own specific version of a system
+    Space gameplay = Space("GAMEPLAY", *this->inputHandler);
+    gameplay.addSystem(this->playerControlSystem);
+    gameplay.addSystem(this->collisionSystem);
+    gameplay.addSystem(this->movementSystem);
+    //gameplay.addSystem(this->renderSystem);
+    Space mainmenu = Space("MAINMENU", *this->inputHandler);
+    //gameplay.addSystem(this->renderSystem);
+
     while(this->isRunning)
     {
 
@@ -73,9 +82,25 @@ void Game::gameLoop()
                 this->events.push_back(event);
             }
             inputHandler->update(this->events);
-            playerControlSystem->update(dt);
-            collisionSystem->update(dt);
-            movementSystem->update(dt);
+            if (gameState == GameState::GAMEPLAY)
+            {
+                gameplay.update(dt);
+            }
+            else if (gameState == GameState::MAINMENU)
+            {
+                mainmenu.update(dt);
+            }
+            if (inputHandler->wasKeyPressed(SDL_SCANCODE_1))
+            {
+                if (gameState == GameState::GAMEPLAY)
+                {
+                    gameState = GameState::MAINMENU;
+                }
+                else if (gameState == GameState::MAINMENU)
+                {
+                    gameState = GameState::GAMEPLAY;
+                }
+            }
             inputHandler->beginNewFrame();
             events.clear();
             accumulator -= dt;

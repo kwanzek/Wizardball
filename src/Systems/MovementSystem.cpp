@@ -3,12 +3,14 @@
 #include <iterator>
 #include <math.h>
 
-MovementSystem::MovementSystem()
+MovementSystem::MovementSystem():
+    System()
 {
     //ctor
 }
 
-MovementSystem::MovementSystem(ComponentManager* componentManager)
+MovementSystem::MovementSystem(ComponentManager* componentManager):
+    System()
 {
     this->componentManager = componentManager;
 }

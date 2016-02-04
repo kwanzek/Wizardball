@@ -4,8 +4,9 @@
 #include "ComponentManager.h"
 
 #include <iterator>
+#include "System.h"
 
-class MovementSystem
+class MovementSystem : public System
 {
     public:
         MovementSystem();

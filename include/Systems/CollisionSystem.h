@@ -5,8 +5,9 @@
 
 #include "ComponentManager.h"
 #include "Constants.h"
+#include "System.h"
 
-class CollisionSystem
+class CollisionSystem : public System
 {
     public:
         CollisionSystem();

@@ -2,12 +2,14 @@
 #include <unordered_map>
 #include <math.h>
 
-RenderSystem::RenderSystem()
+RenderSystem::RenderSystem():
+    System()
 {
     //ctor
 }
 
-RenderSystem::RenderSystem(ComponentManager* componentManager, Graphics* graphics)
+RenderSystem::RenderSystem(ComponentManager* componentManager, Graphics* graphics):
+    System()
 {
     this->componentManager = componentManager;
     this->graphics = graphics;

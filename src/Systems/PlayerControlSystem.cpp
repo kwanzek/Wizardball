@@ -5,12 +5,14 @@
 #include <iostream>
 #include <cmath>
 
-PlayerControlSystem::PlayerControlSystem()
+PlayerControlSystem::PlayerControlSystem():
+    System()
 {
     //ctor
 }
 
 PlayerControlSystem::PlayerControlSystem(ComponentManager* componentManager, EntityFactory* entityFactory, InputHandler* inputHandler) :
+    System(),
     componentManager(componentManager),
     entityFactory(entityFactory),
     inputHandler(inputHandler)

@@ -4,12 +4,14 @@
 #include <cmath>
 #include <iostream>
 
-CollisionSystem::CollisionSystem()
+CollisionSystem::CollisionSystem():
+    System()
 {
     //ctor
 }
 
 CollisionSystem::CollisionSystem(ComponentManager* componentManager) :
+    System(),
     componentManager(componentManager)
 {
 

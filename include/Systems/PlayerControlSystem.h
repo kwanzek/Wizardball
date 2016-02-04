@@ -5,8 +5,9 @@
 #include "InputHandler.h"
 #include "EntityFactory.h"
 #include "Constants.h"
+#include "System.h"
 
-class PlayerControlSystem
+class PlayerControlSystem : public System
 {
     public:
         PlayerControlSystem();

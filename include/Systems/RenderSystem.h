@@ -2,10 +2,11 @@
 #define RENDERSYSTEM_H
 
 #include "ComponentManager.h"
+#include "System.h"
 
 #include <iterator>
 
-class RenderSystem
+class RenderSystem : public System
 {
     public:
         RenderSystem();
@@ -13,7 +14,6 @@ class RenderSystem
         ~RenderSystem();
         void update(float deltaTime);
         void playAnimation(float deltaTime, RenderComponent& renderComponent, StateComponent& stateComponent);
-        ComponentManager* componentManager;
         Graphics* graphics;
     protected:
     private:

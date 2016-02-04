@@ -11,6 +11,7 @@
 #include "InputHandler.h"
 #include "Graphics.h"
 #include "Level.h"
+#include "Space.h"
 
 #include "Systems/RenderSystem.h"
 #include "Systems/PlayerControlSystem.h"
@@ -30,6 +31,12 @@ class Game
         bool isRunning;
         void loadLevel(std::string levelName);
         void unloadLevel();
+        enum GameState
+        {
+            SPLASH,
+            MAINMENU,
+            GAMEPLAY
+        };
     protected:
     private:
         EntityManager* entityManager;
@@ -43,7 +50,7 @@ class Game
         InputHandler* inputHandler;
         Level* level;
         std::vector<SDL_Event> events;
-
+        GameState gameState;
 };
 
 #endif // GAME_H
