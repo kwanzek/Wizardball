@@ -27,10 +27,10 @@ class Game
         ~Game();
         void init();
         void gameLoop();
-        void update(float deltaTime);
         bool isRunning;
-        void loadLevel(std::string levelName);
-        void unloadLevel();
+        void loadLevel(std::string levelName, Space& space);
+        void unloadLevel(Space& space);
+        void setupSpaces();
         enum GameState
         {
             SPLASH,
@@ -39,18 +39,14 @@ class Game
         };
     protected:
     private:
-        EntityManager* entityManager;
-        EntityFactory* entityFactory;
-        ComponentManager* componentManager;
         Graphics* graphics;
-        RenderSystem* renderSystem;
-        PlayerControlSystem* playerControlSystem;
-        MovementSystem* movementSystem;
-        CollisionSystem* collisionSystem;
         InputHandler* inputHandler;
         Level* level;
         std::vector<SDL_Event> events;
         GameState gameState;
+
+        Space* gameplay;
+        Space* mainmenu;
 };
 
 #endif // GAME_H

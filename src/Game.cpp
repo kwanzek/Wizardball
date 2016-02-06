@@ -15,57 +15,28 @@ void Game::init()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     isRunning = true;
-    gameState = GameState::GAMEPLAY;
+    gameState = GameState::MAINMENU;
 
     InputHandler* inputHandler = new InputHandler(*this);
     this->inputHandler = inputHandler;
 
-    EntityManager* entityManager = new EntityManager();
-    this->entityManager = entityManager;
-
     Graphics* graphics = new Graphics();
     this->graphics = graphics;
 
-    ComponentManager* componentManager = new ComponentManager(graphics);
-    this->componentManager = componentManager;
-
-    EntityFactory* entityFactory = new EntityFactory(entityManager, componentManager);
-    this->entityFactory = entityFactory;
-
-    RenderSystem* renderSystem = new RenderSystem(this->componentManager, this->graphics);
-    this->renderSystem = renderSystem;
-
-    PlayerControlSystem* playerControlSystem = new PlayerControlSystem(this->componentManager, this->entityFactory, this->inputHandler);
-    this->playerControlSystem = playerControlSystem;
-
-    MovementSystem* movementSystem = new MovementSystem(this->componentManager);
-    this->movementSystem = movementSystem;
-
-    CollisionSystem* collisionSystem = new CollisionSystem(this->componentManager);
-    this->collisionSystem = collisionSystem;
-
+    this->setupSpaces();
 }
 
 void Game::gameLoop()
 {
     SDL_Event event;
-    entityFactory->createPlayer();
-    this->loadLevel("test");
+    gameplay->entityFactory.createPlayer();
+    this->loadLevel("test", *gameplay);
 
     float dt = 0.01f;
     float accumulator = 0.f;
 
     int currentTimeMS = SDL_GetTicks();
     int lastUpdateTimeMS = currentTimeMS;
-
-    //This isn't the final implementation, each space should have their own specific version of a system
-    Space gameplay = Space("GAMEPLAY", *this->inputHandler);
-    gameplay.addSystem(this->playerControlSystem);
-    gameplay.addSystem(this->collisionSystem);
-    gameplay.addSystem(this->movementSystem);
-    //gameplay.addSystem(this->renderSystem);
-    Space mainmenu = Space("MAINMENU", *this->inputHandler);
-    //gameplay.addSystem(this->renderSystem);
 
     while(this->isRunning)
     {
@@ -84,11 +55,11 @@ void Game::gameLoop()
             inputHandler->update(this->events);
             if (gameState == GameState::GAMEPLAY)
             {
-                gameplay.update(dt);
+                gameplay->update(dt);
             }
             else if (gameState == GameState::MAINMENU)
             {
-                mainmenu.update(dt);
+                mainmenu->update(dt);
             }
             if (inputHandler->wasKeyPressed(SDL_SCANCODE_1))
             {
@@ -109,33 +80,49 @@ void Game::gameLoop()
         //But later I will need to figure out how to integrate state properly, likely holding an Int that is "numStateUpdates"
         //And then I can get the alpha between this state and the next state with the rest of accumulator
         graphics->clearRenderer();
-        renderSystem->update(deltaTime);
+        if (gameState == GameState::GAMEPLAY)
+        {
+            gameplay->renderSystem->update(deltaTime);
+        }
+        else
+        {
+            mainmenu->renderSystem->update(deltaTime);
+        }
         graphics->flip();
 
     }
 }
 
-void Game::update(float deltaTime)
+void Game::setupSpaces()
 {
+    //Set up gameplay space
+    this->gameplay = new Space("GAMEPLAY", *this->inputHandler);
+    this->gameplay->entityManager = EntityManager();
+    this->gameplay->componentManager = ComponentManager(this->graphics);
+    this->gameplay->entityFactory = EntityFactory(&this->gameplay->entityManager, &this->gameplay->componentManager);
 
+    gameplay->addSystem(new PlayerControlSystem(&gameplay->componentManager, &gameplay->entityFactory, this->inputHandler));
+    gameplay->addSystem(new CollisionSystem(&gameplay->componentManager));
+    gameplay->addSystem(new MovementSystem(&gameplay->componentManager));
+    gameplay->renderSystem = new RenderSystem(&gameplay->componentManager, this->graphics);
 
-    graphics->clearRenderer();
+    //Set up menu
+    this->mainmenu = new Space("MAINMENU", *this->inputHandler);
+    this->mainmenu->entityManager = EntityManager();
+    this->mainmenu->componentManager = ComponentManager(this->graphics);
+    this->mainmenu->entityFactory = EntityFactory(&this->gameplay->entityManager, &this->gameplay->componentManager);
 
-
-    renderSystem->update(deltaTime);
-
-
-    graphics->flip();
+    mainmenu->renderSystem = new RenderSystem(&mainmenu->componentManager, this->graphics);
 }
 
-void Game::loadLevel(std::string levelName)
+void Game::loadLevel(std::string levelName, Space& space)
 {
-    this->unloadLevel();
-    level = new Level(this->entityFactory, this->graphics);
-    level->loadLevel(levelName);
+    this->unloadLevel(space);
+    space.level = Level(&space.entityFactory, this->graphics);
+    space.level.loadLevel(levelName);
 }
 
-void Game::unloadLevel()
+void Game::unloadLevel(Space& space)
 {
 
 }

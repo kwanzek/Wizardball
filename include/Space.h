@@ -8,6 +8,7 @@
 #include "InputHandler.h"
 #include "Level.h"
 #include "System.h"
+#include "RenderSystem.h"
 
 #include <string>
 #include <vector>
@@ -29,6 +30,7 @@ class Space
         std::string name;
         bool isActive = true;
         std::vector<System*> systems;
+        RenderSystem* renderSystem;
 
     protected:
     private:
