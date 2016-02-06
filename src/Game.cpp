@@ -19,6 +19,15 @@ void Game::init()
 
     InputHandler* inputHandler = new InputHandler(*this);
     this->inputHandler = inputHandler;
+    int numJoysticks = SDL_NumJoysticks();
+    if (numJoysticks > 0)
+    {
+        for (int i = 0; i < numJoysticks; ++i)
+        {
+            this->inputHandler->joysticks.push_back(SDL_JoystickOpen(i));
+            this->inputHandler->joystickControls.push_back(JoystickControls());
+        }
+    }
 
     Graphics* graphics = new Graphics();
     this->graphics = graphics;

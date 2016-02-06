@@ -1,5 +1,6 @@
 #include "InputHandler.h"
 #include "Game.h"
+#include <cmath>
 
 InputHandler::InputHandler(Game& game):
     game(game)
@@ -32,6 +33,18 @@ void InputHandler::update(std::vector<SDL_Event>& events)
         {
             this->keyUpEvent(event);
         }
+        else if (event.type == SDL_JOYAXISMOTION)
+        {
+            this->joyAxisMotion(event);
+        }
+        else if (event.type == SDL_JOYBUTTONDOWN)
+        {
+            this->joyButtonDown(event);
+        }
+        else if (event.type == SDL_JOYBUTTONUP)
+        {
+            this->joyButtonUp(event);
+        }
     }
     if (this->wasKeyPressed(SDL_SCANCODE_ESCAPE))
     {
@@ -57,6 +70,35 @@ void InputHandler::keyUpEvent(SDL_Event& event)
 {
     this->_releasedKeys[event.key.keysym.scancode] = true;
     this->_heldKeys[event.key.keysym.scancode] = false;
+}
+
+void InputHandler::joyAxisMotion(SDL_Event& event)
+{
+    SDL_JoystickID joystickID = event.jaxis.which;
+    int axis = static_cast<int>(event.jaxis.axis);
+    int value = static_cast<int>(event.jaxis.value);
+    if (std::abs(value) < JOYSTICK_DEAD_ZONE )
+    {
+        //X axis
+        if (axis == 0)
+        {
+            this->joystickControls[joystickID].xAxis = value;
+        }
+        else
+        {
+            this->joystickControls[joystickID].yAxis = value;
+        }
+    }
+}
+
+void InputHandler::joyButtonDown(SDL_Event& event)
+{
+
+}
+
+void InputHandler::joyButtonUp(SDL_Event& event)
+{
+
 }
 
 //check if key was pressed during this frame
