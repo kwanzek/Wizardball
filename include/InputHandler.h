@@ -9,11 +9,18 @@ class Game;
 
 struct JoystickControls
 {
+    SDL_JoystickID joystickID;
     float xAxis;
     float yAxis;
     std::map<int, bool> heldButtons;
     std::map<int, bool> pressedButtons;
     std::map<int, bool> releasedButtons;
+};
+
+enum Axis
+{
+    XAXIS,
+    YAXIS
 };
 
 class InputHandler
@@ -29,6 +36,10 @@ class InputHandler
         void joyButtonDown(SDL_Event& event);
         void joyButtonUp(SDL_Event& event);
 
+        float getJoyAxis(SDL_JoystickID joystickID, Axis axis);
+        bool wasJoyButtonPressed(SDL_JoystickID, int button);
+        bool wasJoyButtonReleased(SDL_JoystickID, int button);
+        bool isJoyButtonHeld(SDL_JoystickID, int button);
         bool wasKeyPressed(SDL_Scancode key);
         bool wasKeyReleased(SDL_Scancode key);
         bool isKeyHeld(SDL_Scancode key);
@@ -45,7 +56,7 @@ class InputHandler
 
         //Must cross a certain threshold of input to be registered
         //The value comes in as signed int 2^32 so -32768 to 32767
-        const int JOYSTICK_DEAD_ZONE = 5000;
+        const int JOYSTICK_DEAD_ZONE = 12000;
 };
 
 #endif // INPUTHANDLER_H

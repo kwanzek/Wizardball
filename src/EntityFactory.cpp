@@ -7,9 +7,10 @@ EntityFactory::EntityFactory()
     //ctor
 }
 
-EntityFactory::EntityFactory(EntityManager* entityManager, ComponentManager* componentManager):
+EntityFactory::EntityFactory(EntityManager* entityManager, ComponentManager* componentManager, InputHandler* inputHandler):
     _entityManager(entityManager),
-    _componentManager(componentManager)
+    _componentManager(componentManager),
+    _inputHandler(inputHandler)
 {
 
 }
@@ -23,7 +24,24 @@ unsigned int EntityFactory::createPlayer()
 {
     unsigned int eID = _entityManager->createEntity();
     _componentManager->makeTransformComponent(eID, 300, 100);
-    _componentManager->makePlayerInputComponent(eID, SDL_SCANCODE_SPACE, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT, SDL_SCANCODE_Z);
+
+    //This should be handled more organically to allow for more players
+    //And it would be nice if it could be handled during gameplay rather than just player creation
+    //But for now, just getting something in there
+    SDL_JoystickID player1joystick = -1;
+    if (_inputHandler->joystickControls.size() > 0)
+    {
+        player1joystick = _inputHandler->joystickControls[0].joystickID;
+    }
+    _componentManager->makePlayerInputComponent(
+        eID,
+        SDL_SCANCODE_SPACE,
+        SDL_SCANCODE_LEFT,
+        SDL_SCANCODE_RIGHT,
+        SDL_SCANCODE_Z,
+        player1joystick
+    );
+
     _componentManager->makePlayerControllerComponent(eID);
     _componentManager->makeVelocityComponent(eID, 0, 0, 140, 100, 500);
     _componentManager->makeCollisionComponent(eID, 100, 100, 16, 16, CollisionLayer::PLAYER);

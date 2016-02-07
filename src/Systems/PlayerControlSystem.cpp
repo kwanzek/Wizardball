@@ -51,8 +51,9 @@ void PlayerControlSystem::update(float deltaTime)
 
             float targetDX = transformComponent->grounded ? velocityComponent->maxXSpeedGround : velocityComponent->maxXSpeedAir;
 
-            if (inputHandler->isKeyHeld(playerInputComponent->leftCommand))
+            if (inputHandler->isKeyHeld(playerInputComponent->leftCommand) || inputHandler->getJoyAxis(playerInputComponent->joystickID, Axis::XAXIS) < 0)
             {
+                std::cout << inputHandler->getJoyAxis(playerInputComponent->joystickID, Axis::XAXIS) << std::endl;
                 velocityComponent->dx = -1 * targetDX;
                 transformComponent->facing = Direction::Facing::LEFT;
                 stateComponent->state = "run";

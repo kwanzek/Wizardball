@@ -3,6 +3,7 @@
 
 #include "EntityManager.h"
 #include "ComponentManager.h"
+#include "InputHandler.h"
 #include "Utils/Vector2.h"
 
 #include <SDL.h>
@@ -14,7 +15,7 @@ class EntityFactory
 {
     public:
         EntityFactory();
-        EntityFactory(EntityManager* entityManager, ComponentManager* ComponentManager);
+        EntityFactory(EntityManager* entityManager, ComponentManager* ComponentManager, InputHandler* inputHandler);
         virtual ~EntityFactory();
         unsigned int createPlayer();
         unsigned int createTile(std::string texturePath, Vector2 vecSize, Vector2 tilesetPosition, Vector2 tilePosition);
@@ -23,6 +24,7 @@ class EntityFactory
     private:
         EntityManager* _entityManager;
         ComponentManager* _componentManager;
+        InputHandler* _inputHandler;
 };
 
 #endif // ENTITYFACTORY_H

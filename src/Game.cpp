@@ -26,6 +26,7 @@ void Game::init()
         {
             this->inputHandler->joysticks.push_back(SDL_JoystickOpen(i));
             this->inputHandler->joystickControls.push_back(JoystickControls());
+            this->inputHandler->joystickControls[i].joystickID = SDL_JoystickInstanceID(inputHandler->joysticks[i]);
         }
     }
 
@@ -108,7 +109,11 @@ void Game::setupSpaces()
     this->gameplay = new Space("GAMEPLAY", *this->inputHandler);
     this->gameplay->entityManager = EntityManager();
     this->gameplay->componentManager = ComponentManager(this->graphics);
-    this->gameplay->entityFactory = EntityFactory(&this->gameplay->entityManager, &this->gameplay->componentManager);
+    this->gameplay->entityFactory = EntityFactory(
+        &this->gameplay->entityManager,
+        &this->gameplay->componentManager,
+        this->inputHandler
+    );
 
     gameplay->addSystem(new PlayerControlSystem(&gameplay->componentManager, &gameplay->entityFactory, this->inputHandler));
     gameplay->addSystem(new CollisionSystem(&gameplay->componentManager));
@@ -119,7 +124,11 @@ void Game::setupSpaces()
     this->mainmenu = new Space("MAINMENU", *this->inputHandler);
     this->mainmenu->entityManager = EntityManager();
     this->mainmenu->componentManager = ComponentManager(this->graphics);
-    this->mainmenu->entityFactory = EntityFactory(&this->gameplay->entityManager, &this->gameplay->componentManager);
+    this->mainmenu->entityFactory = EntityFactory(
+        &this->mainmenu->entityManager,
+        &this->mainmenu->componentManager,
+        this->inputHandler
+    );
 
     mainmenu->renderSystem = new RenderSystem(&mainmenu->componentManager, this->graphics);
 }

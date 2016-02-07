@@ -58,6 +58,13 @@ void InputHandler::beginNewFrame()
 {
     this->_pressedKeys.clear();
     this->_releasedKeys.clear();
+    for (unsigned int i = 0; i < this->joystickControls.size(); ++i)
+    {
+        this->joystickControls[i].pressedButtons.clear();
+        this->joystickControls[i].releasedButtons.clear();
+        //this->joystickControls[i].xAxis = 0.0f;
+        //this->joystickControls[i].yAxis = 0.0f;
+    }
 }
 
 void InputHandler::keyDownEvent(SDL_Event& event)
@@ -84,21 +91,71 @@ void InputHandler::joyAxisMotion(SDL_Event& event)
         {
             this->joystickControls[joystickID].xAxis = value;
         }
-        else
+        else if (axis == 1)
         {
             this->joystickControls[joystickID].yAxis = value;
+        }
+    }
+    else
+    {
+        if (axis == 0)
+        {
+            this->joystickControls[joystickID].xAxis = 0.0f;
+        }
+        else if (axis == 1)
+        {
+            this->joystickControls[joystickID].yAxis = 0.0f;
         }
     }
 }
 
 void InputHandler::joyButtonDown(SDL_Event& event)
 {
-
+    SDL_JoystickID joystickID = event.jbutton.which;
+    int button = static_cast<int>(event.jbutton.button);
+    this->joystickControls[joystickID].pressedButtons[button] = true;
+    this->joystickControls[joystickID].heldButtons[button] = true;
 }
 
 void InputHandler::joyButtonUp(SDL_Event& event)
 {
+    SDL_JoystickID joystickID = event.jbutton.which;
+    int button = static_cast<int>(event.jbutton.button);
+    this->joystickControls[joystickID].releasedButtons[button] = true;
+    this->joystickControls[joystickID].heldButtons[button] = false;
+}
 
+float InputHandler::getJoyAxis(SDL_JoystickID joystickID, Axis axis)
+{
+    //We are storing the axes as 0 and 1 like SDL, but we want to reason about them
+    //with an enum rather than passing magic ints around
+    //In the future, since R and L trigger on XBOX controllers are treated like axes
+    //As well as the right stick, we might want to extend this further
+    float axisVal = 0;
+    if (axis == Axis::YAXIS)
+    {
+        axisVal = this->joystickControls[joystickID].yAxis;
+    }
+    else if (axis == Axis::XAXIS)
+    {
+        axisVal = this->joystickControls[joystickID].xAxis;
+    }
+    return axisVal;
+}
+
+bool InputHandler::wasJoyButtonPressed(SDL_JoystickID joystickID, int button)
+{
+    return this->joystickControls[joystickID].pressedButtons[button];
+}
+
+bool InputHandler::wasJoyButtonReleased(SDL_JoystickID joystickID, int button)
+{
+    return this->joystickControls[joystickID].releasedButtons[button];
+}
+
+bool InputHandler::isJoyButtonHeld(SDL_JoystickID joystickID, int button)
+{
+    return this->joystickControls[joystickID].heldButtons[button];
 }
 
 //check if key was pressed during this frame
