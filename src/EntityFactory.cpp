@@ -39,7 +39,9 @@ unsigned int EntityFactory::createPlayer()
         SDL_SCANCODE_LEFT,
         SDL_SCANCODE_RIGHT,
         SDL_SCANCODE_Z,
-        player1joystick
+        player1joystick,
+        0,
+        1
     );
 
     _componentManager->makePlayerControllerComponent(eID);

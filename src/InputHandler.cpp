@@ -84,7 +84,7 @@ void InputHandler::joyAxisMotion(SDL_Event& event)
     SDL_JoystickID joystickID = event.jaxis.which;
     int axis = static_cast<int>(event.jaxis.axis);
     int value = static_cast<int>(event.jaxis.value);
-    if (std::abs(value) < JOYSTICK_DEAD_ZONE )
+    if (std::abs(value) > JOYSTICK_DEAD_ZONE )
     {
         //X axis
         if (axis == 0)
@@ -127,6 +127,10 @@ void InputHandler::joyButtonUp(SDL_Event& event)
 
 float InputHandler::getJoyAxis(SDL_JoystickID joystickID, Axis axis)
 {
+    if (joystickID == -1)
+    {
+        return 0.0f;
+    }
     //We are storing the axes as 0 and 1 like SDL, but we want to reason about them
     //with an enum rather than passing magic ints around
     //In the future, since R and L trigger on XBOX controllers are treated like axes
@@ -145,11 +149,19 @@ float InputHandler::getJoyAxis(SDL_JoystickID joystickID, Axis axis)
 
 bool InputHandler::wasJoyButtonPressed(SDL_JoystickID joystickID, int button)
 {
+    if (joystickID == -1)
+    {
+        return false;
+    }
     return this->joystickControls[joystickID].pressedButtons[button];
 }
 
 bool InputHandler::wasJoyButtonReleased(SDL_JoystickID joystickID, int button)
 {
+    if (joystickID == -1)
+    {
+        return false;
+    }
     return this->joystickControls[joystickID].releasedButtons[button];
 }
 

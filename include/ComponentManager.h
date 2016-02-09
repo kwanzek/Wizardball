@@ -42,7 +42,9 @@ class ComponentManager
             SDL_Scancode left,
             SDL_Scancode right,
             SDL_Scancode fireball,
-            SDL_JoystickID joystickID = -1
+            SDL_JoystickID joystickID = -1,
+            int joyButtonJump = -1,
+            int joyButtonFireball = -1
         );
         PlayerControllerComponent* makePlayerControllerComponent(unsigned int eid);
         VelocityComponent* makeVelocityComponent(

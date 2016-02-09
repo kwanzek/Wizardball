@@ -47,10 +47,12 @@ PlayerInputComponent* ComponentManager::makePlayerInputComponent(
     SDL_Scancode left,
     SDL_Scancode right,
     SDL_Scancode fireball,
-    SDL_JoystickID joystickID
+    SDL_JoystickID joystickID,
+    int joyJumpButton,
+    int joyFireballButton
     )
 {
-    PlayerInputComponent* component = new PlayerInputComponent(jump, left, right, fireball, joystickID);
+    PlayerInputComponent* component = new PlayerInputComponent(jump, left, right, fireball, joystickID, joyJumpButton, joyFireballButton);
     playerInputComponents.insert(std::make_pair(eid, component));
     return component;
 }

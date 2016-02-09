@@ -51,14 +51,13 @@ void PlayerControlSystem::update(float deltaTime)
 
             float targetDX = transformComponent->grounded ? velocityComponent->maxXSpeedGround : velocityComponent->maxXSpeedAir;
 
-            if (inputHandler->isKeyHeld(playerInputComponent->leftCommand) || inputHandler->getJoyAxis(playerInputComponent->joystickID, Axis::XAXIS) < 0)
+            if (this->didAction(PlayerCommand::LEFT, *playerInputComponent))
             {
-                std::cout << inputHandler->getJoyAxis(playerInputComponent->joystickID, Axis::XAXIS) << std::endl;
                 velocityComponent->dx = -1 * targetDX;
                 transformComponent->facing = Direction::Facing::LEFT;
                 stateComponent->state = "run";
             }
-            else if (inputHandler->isKeyHeld(playerInputComponent->rightCommand))
+            else if (this->didAction(PlayerCommand::RIGHT, *playerInputComponent))
             {
                 velocityComponent->dx = targetDX;
                 transformComponent->facing = Direction::Facing::RIGHT;
@@ -70,7 +69,7 @@ void PlayerControlSystem::update(float deltaTime)
                 stateComponent->state = "idle";
             }
 
-            if (velocityComponent->currentIgnoreGravityTime <= 0 || !inputHandler->isKeyHeld(playerInputComponent->jumpCommand))
+            if (velocityComponent->currentIgnoreGravityTime <= 0 || !this->didAction(PlayerCommand::JUMP, *playerInputComponent))
             {
                 velocityComponent->currentIgnoreGravityTime = 0;
                 velocityComponent->ignoreGravity = false;
@@ -80,14 +79,14 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent->currentIgnoreGravityTime -= deltaTime;
             }
 
-            if (transformComponent->grounded && velocityComponent->dy == 0 && inputHandler->wasKeyPressed(playerInputComponent->jumpCommand))
+            if (transformComponent->grounded && velocityComponent->dy == 0 && this->didAction(PlayerCommand::JUMP, *playerInputComponent))
             {
                 velocityComponent->dy = -1 * playerControllerComponent->jumpForce;
                 velocityComponent->ignoreGravity = true;
                 velocityComponent->currentIgnoreGravityTime = velocityComponent->baseIgnoreGravityTime;
             }
 
-            if (inputHandler->wasKeyPressed(playerInputComponent->fireballCommand))
+            if (this->didAction(PlayerCommand::FIREBALL, *playerInputComponent))
             {
                 float fireballSpeed = 100;
                 if (transformComponent->facing == Direction::Facing::LEFT)
@@ -100,4 +99,26 @@ void PlayerControlSystem::update(float deltaTime)
         }
 
     }
+}
+
+bool PlayerControlSystem::didAction(PlayerCommand playerCommand, PlayerInputComponent& playerInputComponent)
+{
+    switch(playerCommand)
+    {
+        case JUMP:
+            return (inputHandler->isKeyHeld(playerInputComponent.jumpCommand)
+                || inputHandler->isJoyButtonHeld(playerInputComponent.joystickID, playerInputComponent.joyJumpButton));
+        case LEFT:
+            return (inputHandler->isKeyHeld(playerInputComponent.leftCommand)
+                || inputHandler->getJoyAxis(playerInputComponent.joystickID, Axis::XAXIS) < 0);
+        case RIGHT:
+            return (inputHandler->isKeyHeld(playerInputComponent.rightCommand)
+                || inputHandler->getJoyAxis(playerInputComponent.joystickID, Axis::XAXIS) > 0);
+        case FIREBALL:
+            return (inputHandler->wasKeyPressed(playerInputComponent.fireballCommand)
+                || inputHandler->wasJoyButtonPressed(playerInputComponent.joystickID, playerInputComponent.joyFireballButton));
+        default:
+            return false;
+    }
+
 }

@@ -17,6 +17,8 @@ class PlayerControlSystem : public System
         ComponentManager* componentManager;
         EntityFactory* entityFactory;
         InputHandler* inputHandler;
+
+        bool didAction(PlayerCommand playerCommand, PlayerInputComponent& playerInputComponent);
     protected:
     private:
 };
