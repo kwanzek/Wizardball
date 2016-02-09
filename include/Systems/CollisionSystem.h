@@ -15,6 +15,7 @@ class CollisionSystem : public System
         ~CollisionSystem();
         void update(float deltaTime);
         ComponentManager* componentManager;
+        bool shouldCollide(CollisionComponent& collider, CollisionComponent& other);
     protected:
     private:
 };

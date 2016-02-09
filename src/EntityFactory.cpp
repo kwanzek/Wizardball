@@ -85,3 +85,13 @@ unsigned int EntityFactory::createFireball(Vector2 position, float dx, float dy 
     _componentManager->makeCollisionComponent(eID, position.x, position.y, 16,16, CollisionLayer::PROJECTILE);
     return eID;
 }
+
+unsigned int EntityFactory::createBall()
+{
+    unsigned int eID = _entityManager->createEntity();
+    _componentManager->makeTransformComponent(eID, 150, 150);
+    _componentManager->makeRenderComponent(eID, 0, 0, 16, 16, "content/sprites/Ball.png");
+    _componentManager->makeVelocityComponent(eID, 0, 0, 0, 100, 100);
+    _componentManager->makeCollisionComponent(eID, 150, 150, 16, 16, CollisionLayer::BALL);
+    return eID;
+}

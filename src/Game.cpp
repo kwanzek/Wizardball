@@ -15,7 +15,7 @@ void Game::init()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     isRunning = true;
-    gameState = GameState::MAINMENU;
+    gameState = GameState::GAMEPLAY;
 
     InputHandler* inputHandler = new InputHandler(*this);
     this->inputHandler = inputHandler;
@@ -40,6 +40,7 @@ void Game::gameLoop()
 {
     SDL_Event event;
     gameplay->entityFactory.createPlayer();
+    gameplay->entityFactory.createBall();
     this->loadLevel("test", *gameplay);
 
     float dt = 0.01f;

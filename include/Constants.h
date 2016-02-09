@@ -41,6 +41,7 @@ namespace CollisionLayer
         TILE,
         PLAYER,
         PROJECTILE,
+        BALL,
         NONE
     };
 

@@ -1,7 +1,7 @@
 #ifndef VELOCITYCOMPONENT_H
 #define VELOCITYCOMPONENT_H
 
-#include <iostream>
+#include "Utils/Vector2.h"
 class VelocityComponent
 {
 public:
@@ -14,6 +14,8 @@ public:
     {}
     float dx;
     float dy;
+    Vector2 separation;
+    Vector2 penetration;
     float maxXSpeedGround;
     float maxXSpeedAir;
     float maxYSpeed;

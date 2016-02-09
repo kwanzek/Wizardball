@@ -167,6 +167,10 @@ bool InputHandler::wasJoyButtonReleased(SDL_JoystickID joystickID, int button)
 
 bool InputHandler::isJoyButtonHeld(SDL_JoystickID joystickID, int button)
 {
+    if (joystickID == -1)
+    {
+        return false;
+    }
     return this->joystickControls[joystickID].heldButtons[button];
 }
 
