@@ -14,7 +14,6 @@ public:
     {}
     float dx;
     float dy;
-    Vector2 separation;
     Vector2 penetration;
     float maxXSpeedGround;
     float maxXSpeedAir;

@@ -68,6 +68,7 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent->dx = 0.0f;
                 stateComponent->state = "idle";
             }
+            velocityComponent->dx = targetDX;
 
             if (velocityComponent->currentIgnoreGravityTime <= 0 || !this->didAction(PlayerCommand::JUMP, *playerInputComponent))
             {

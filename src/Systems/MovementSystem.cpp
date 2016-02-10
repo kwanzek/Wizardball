@@ -32,14 +32,16 @@ void MovementSystem::update(float deltaTime)
         if (it != componentManager->transformComponents.end())
         {
             TransformComponent* transformComponent = it->second;
-            transformComponent->x += velocityComponent->dx * deltaTime;
+            transformComponent->x += (velocityComponent->dx * deltaTime) + velocityComponent->penetration.x;
             if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed && !velocityComponent->ignoreGravity)
             {
                 velocityComponent->dy += globals::GRAVITY * deltaTime;
             }
             velocityComponent->dy = std::min(velocityComponent->dy, velocityComponent->maxYSpeed);
-            transformComponent->y += velocityComponent->dy * deltaTime;
+            transformComponent->y += (velocityComponent->dy * deltaTime) + velocityComponent->penetration.y;
 
+            velocityComponent->penetration.x = 0;
+            velocityComponent->penetration.y = 0;
             std::unordered_map<unsigned int, CollisionComponent*>::iterator collisionIt = componentManager->collisionComponents.find(entityID);
             if (collisionIt != componentManager->collisionComponents.end())
             {

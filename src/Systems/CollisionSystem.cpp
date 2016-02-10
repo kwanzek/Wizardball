@@ -31,25 +31,29 @@ void CollisionSystem::update(float deltaTime)
         CollisionComponent* collisionComponent = iter->second;
 
         //Need to get the velocity and transform components
-        TransformComponent* transformComponent;
+        TransformComponent* transformComponent = NULL;
         bool hasGroundedCollision = false;
         std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
         if (it != componentManager->transformComponents.end())
         {
             transformComponent = it->second;
         }
+        else
+        {
+            continue;
+        }
 
-        VelocityComponent* velocityComponent;
+        VelocityComponent* velocityComponent = NULL;
         std::unordered_map<unsigned int, VelocityComponent*>::iterator velocityIt = componentManager->velocityComponents.find(entityID);
         if (velocityIt != componentManager->velocityComponents.end())
         {
             velocityComponent = velocityIt->second;
         }
-
-        if (transformComponent == NULL || velocityComponent == NULL)
+        else
         {
             continue;
         }
+
         //Check bounding box collision, adding player dX and dY
         Rectangle newPos = Rectangle(
             collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime,
@@ -58,19 +62,19 @@ void CollisionSystem::update(float deltaTime)
             collisionComponent->boundingBox.getHeight()
         );
 
+        int xPenetration = 0;
         for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
         {
             int otherEntityID = otherIter->first;
+            if (entityID == otherEntityID)
+            {
+                continue;
+            }
             CollisionComponent* otherCollision = otherIter->second;
             std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
-            TransformComponent* otherTransform;
-            if (otherIt != componentManager->transformComponents.end())
-            {
-                otherTransform = it->second;
-            }
 
-            if (shouldCollide(*collisionComponent, *otherCollision) && otherTransform != NULL)
+            if (shouldCollide(*collisionComponent, *otherCollision))
             {
                 if (newPos.collidesWith(otherCollision->boundingBox))
                 {
@@ -80,20 +84,24 @@ void CollisionSystem::update(float deltaTime)
 
                     if (collisionSide == sides::LEFT)
                     {
-                        velocityComponent->dx = std::max(velocityComponent->dx,
-                            static_cast<float>(otherCollision->boundingBox.getRight() - collisionComponent->boundingBox.getLeft())+1);
+                        velocityComponent->dx = 0;
+                        xPenetration = std::max(velocityComponent->dx,
+                            static_cast<float>(otherCollision->boundingBox.getRight() - newPos.getLeft()));
                     }
                     else if (collisionSide == sides::RIGHT)
                     {
-                        velocityComponent->dx = std::min(velocityComponent->dx,
-                            static_cast<float>(otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight())-1);
+                        velocityComponent->dx = 0;
+                        xPenetration = std::min(velocityComponent->dx,
+                            static_cast<float>(otherCollision->boundingBox.getLeft() - newPos.getRight()));
                     }
-                    newPos.x = collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime;
                 }
 
             }
 
         }
+
+        velocityComponent->penetration.x = xPenetration;
+        newPos.x += xPenetration;
 
         for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
@@ -101,13 +109,8 @@ void CollisionSystem::update(float deltaTime)
             int otherEntityID = otherIter->first;
             CollisionComponent* otherCollision = otherIter->second;
             std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
-            TransformComponent* otherTransform;
-            if (otherIt != componentManager->transformComponents.end())
-            {
-                otherTransform = it->second;
-            }
 
-            if (shouldCollide(*collisionComponent, *otherCollision) && otherTransform != NULL)
+            if (shouldCollide(*collisionComponent, *otherCollision))
             {
                 if (newPos.collidesWith(otherCollision->boundingBox))
                 {
@@ -117,23 +120,28 @@ void CollisionSystem::update(float deltaTime)
 
                     if (collisionSide == sides::TOP)
                     {
-                        velocityComponent->dy = std::max(velocityComponent->dy,
+                        velocityComponent->dy = 0;
+                        velocityComponent->penetration.y = std::max(velocityComponent->dy,
                             static_cast<float>(otherCollision->boundingBox.getBottom() - collisionComponent->boundingBox.getTop()));
                     }
                     else if (collisionSide == sides::BOTTOM)
                     {
-                        velocityComponent->dy = std::min(velocityComponent->dy,
+                        velocityComponent->dy = 0;
+                        velocityComponent->penetration.y = std::min(velocityComponent->dy,
                             static_cast<float>(otherCollision->boundingBox.getTop() - collisionComponent->boundingBox.getBottom()));
                         hasGroundedCollision = true;
                     }
-                    newPos.y = collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime;
+                    //newPos.y = collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime;
                 }
 
             }
 
         }
         transformComponent->grounded = hasGroundedCollision;
-        //collisionComponent->boundingBox.x = newPos.x;
+        velocityComponent = NULL;
+        transformComponent = NULL;
+        collisionComponent = NULL;
+        //collisionComponent->boundingBox.x = newPos.x+velocityComponent->penetration.x;
         //collisionComponent->boundingBox.y = newPos.y;
     }
 }
