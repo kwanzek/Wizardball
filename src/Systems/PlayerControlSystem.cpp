@@ -68,7 +68,6 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent->dx = 0.0f;
                 stateComponent->state = "idle";
             }
-            velocityComponent->dx = targetDX;
 
             if (velocityComponent->currentIgnoreGravityTime <= 0 || !this->didAction(PlayerCommand::JUMP, *playerInputComponent))
             {
@@ -111,10 +110,10 @@ bool PlayerControlSystem::didAction(PlayerCommand playerCommand, PlayerInputComp
                 || inputHandler->isJoyButtonHeld(playerInputComponent.joystickID, playerInputComponent.joyJumpButton));
         case LEFT:
             return (inputHandler->isKeyHeld(playerInputComponent.leftCommand)
-                || inputHandler->getJoyAxis(playerInputComponent.joystickID, Axis::XAXIS) < 0);
+                || inputHandler->getJoyAxis(playerInputComponent.joystickID, Axis::X) < 0);
         case RIGHT:
             return (inputHandler->isKeyHeld(playerInputComponent.rightCommand)
-                || inputHandler->getJoyAxis(playerInputComponent.joystickID, Axis::XAXIS) > 0);
+                || inputHandler->getJoyAxis(playerInputComponent.joystickID, Axis::X) > 0);
         case FIREBALL:
             return (inputHandler->wasKeyPressed(playerInputComponent.fireballCommand)
                 || inputHandler->wasJoyButtonPressed(playerInputComponent.joystickID, playerInputComponent.joyFireballButton));

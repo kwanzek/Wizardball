@@ -62,7 +62,6 @@ void CollisionSystem::update(float deltaTime)
             collisionComponent->boundingBox.getHeight()
         );
 
-        int xPenetration = 0;
         for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
         {
@@ -76,32 +75,19 @@ void CollisionSystem::update(float deltaTime)
 
             if (shouldCollide(*collisionComponent, *otherCollision))
             {
-                if (newPos.collidesWith(otherCollision->boundingBox))
+                if (newPos.collidesWith(otherCollision->boundingBox, Axis::X))
                 {
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
-                    //We want to limit the entity's dy and dx based on which side the collision happened
-                    //And how far we can go
+                    //For now we are just going to set the velocity to 0 for all entities
+                    //We might want to make the ball bounce off things eventually which will have different physics
 
-                    if (collisionSide == sides::LEFT)
-                    {
-                        velocityComponent->dx = 0;
-                        xPenetration = std::max(velocityComponent->dx,
-                            static_cast<float>(otherCollision->boundingBox.getRight() - newPos.getLeft()));
-                    }
-                    else if (collisionSide == sides::RIGHT)
-                    {
-                        velocityComponent->dx = 0;
-                        xPenetration = std::min(velocityComponent->dx,
-                            static_cast<float>(otherCollision->boundingBox.getLeft() - newPos.getRight()));
-                    }
+                    velocityComponent->dx = 0;
                 }
 
             }
 
         }
-
-        velocityComponent->penetration.x = xPenetration;
-        newPos.x += xPenetration;
+        newPos.x = transformComponent->x + (velocityComponent->dx * deltaTime);
 
         for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
@@ -112,37 +98,25 @@ void CollisionSystem::update(float deltaTime)
 
             if (shouldCollide(*collisionComponent, *otherCollision))
             {
-                if (newPos.collidesWith(otherCollision->boundingBox))
+                if (newPos.collidesWith(otherCollision->boundingBox, Axis::Y))
                 {
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
-                    //We want to limit the entity's dy and dx based on which side the collision happened
-                    //And how far we can go
-
-                    if (collisionSide == sides::TOP)
+                    velocityComponent->dy = 0;
+                    if (collisionSide == sides::BOTTOM)
                     {
-                        velocityComponent->dy = 0;
-                        velocityComponent->penetration.y = std::max(velocityComponent->dy,
-                            static_cast<float>(otherCollision->boundingBox.getBottom() - collisionComponent->boundingBox.getTop()));
-                    }
-                    else if (collisionSide == sides::BOTTOM)
-                    {
-                        velocityComponent->dy = 0;
-                        velocityComponent->penetration.y = std::min(velocityComponent->dy,
-                            static_cast<float>(otherCollision->boundingBox.getTop() - collisionComponent->boundingBox.getBottom()));
                         hasGroundedCollision = true;
                     }
-                    //newPos.y = collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime;
                 }
 
             }
 
         }
+        newPos.y = transformComponent->y + (velocityComponent->dy * deltaTime);
+
         transformComponent->grounded = hasGroundedCollision;
         velocityComponent = NULL;
         transformComponent = NULL;
         collisionComponent = NULL;
-        //collisionComponent->boundingBox.x = newPos.x+velocityComponent->penetration.x;
-        //collisionComponent->boundingBox.y = newPos.y;
     }
 }
 

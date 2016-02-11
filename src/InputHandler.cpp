@@ -125,7 +125,7 @@ void InputHandler::joyButtonUp(SDL_Event& event)
     this->joystickControls[joystickID].heldButtons[button] = false;
 }
 
-float InputHandler::getJoyAxis(SDL_JoystickID joystickID, Axis axis)
+float InputHandler::getJoyAxis(SDL_JoystickID joystickID, Axis::Axis axis)
 {
     if (joystickID == -1)
     {
@@ -136,11 +136,11 @@ float InputHandler::getJoyAxis(SDL_JoystickID joystickID, Axis axis)
     //In the future, since R and L trigger on XBOX controllers are treated like axes
     //As well as the right stick, we might want to extend this further
     float axisVal = 0;
-    if (axis == Axis::YAXIS)
+    if (axis == Axis::Y)
     {
         axisVal = this->joystickControls[joystickID].yAxis;
     }
-    else if (axis == Axis::XAXIS)
+    else if (axis == Axis::X)
     {
         axisVal = this->joystickControls[joystickID].xAxis;
     }

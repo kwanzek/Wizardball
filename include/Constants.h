@@ -34,6 +34,15 @@ namespace sides
     }
 }
 
+namespace Axis
+{
+    enum Axis
+    {
+        X,
+        Y
+    };
+}
+
 namespace CollisionLayer
 {
     enum Layer
@@ -44,7 +53,6 @@ namespace CollisionLayer
         BALL,
         NONE
     };
-
 }
 
 namespace Direction {
