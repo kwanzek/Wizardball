@@ -80,12 +80,39 @@ void CollisionSystem::update(float deltaTime)
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
                     //For now we are just going to set the velocity to 0 for all entities
                     //We might want to make the ball bounce off things eventually which will have different physics
+                    if (collisionSide == sides::LEFT || collisionSide == sides::RIGHT)
+                    {
+                        if (collisionComponent->layer == CollisionLayer::PROJECTILE && otherCollision->layer == CollisionLayer::BALL)
+                        {
+                            VelocityComponent* otherVelocity = NULL;
+                            std::unordered_map<unsigned int, VelocityComponent*>::iterator otherVelocityIt = componentManager->velocityComponents.find(otherEntityID);
+                            if (otherVelocityIt != componentManager->velocityComponents.end())
+                            {
+                                otherVelocity = otherVelocityIt->second;
+                            }
 
-                    velocityComponent->dx = 0;
+                            Vector2 difference = {
+                                static_cast<float>(otherCollision->boundingBox.getCenterX() - collisionComponent->boundingBox.getCenterX()),
+                                static_cast<float>(otherCollision->boundingBox.getCenterY() - collisionComponent->boundingBox.getCenterY())
+                            };
+
+                            Vector2 unitVector = difference.computeUnitVector();
+                            float speed = 200;
+                            float xSpeed = unitVector.x * speed;
+                            float ySpeed = unitVector.y * speed;
+                            otherVelocity->dx = xSpeed;
+                            otherVelocity->dy = ySpeed;
+                        }
+                        else
+                        {
+                            if (std::abs(newPos.y - otherCollision->boundingBox.getTop()) < collisionComponent->boundingBox.getHeight())
+                            {
+                                velocityComponent->dx = 0;
+                            }
+                        }
+                    }
                 }
-
             }
-
         }
         newPos.x = transformComponent->x + (velocityComponent->dx * deltaTime);
 
@@ -101,10 +128,17 @@ void CollisionSystem::update(float deltaTime)
                 if (newPos.collidesWith(otherCollision->boundingBox, Axis::Y))
                 {
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
-                    velocityComponent->dy = 0;
-                    if (collisionSide == sides::BOTTOM)
+                    if (collisionSide == sides::TOP || collisionSide == sides::BOTTOM)
                     {
-                        hasGroundedCollision = true;
+                        if (std::abs(newPos.x - otherCollision->boundingBox.getLeft()) < collisionComponent->boundingBox.getWidth())
+                        {
+                            velocityComponent->dy = 0;
+                            if (collisionSide == sides::BOTTOM)
+                            {
+                                hasGroundedCollision = true;
+                            }
+                        }
+
                     }
                 }
 
