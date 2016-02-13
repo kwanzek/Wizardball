@@ -48,8 +48,8 @@ public:
     //Takes in another Rectangle and checks if the two are colliding
     const bool collidesWith(const Rectangle &other, Axis::Axis axis) const
     {
-        int xOffset = axis == Axis::Y ? 1 : 0;
-        int yOffset = axis == Axis::X ? 1 : 0;
+        int xOffset = axis == Axis::Y ? 0 : 0;
+        int yOffset = axis == Axis::X ? 0 : 0;
         return
             this->getRight()-xOffset >= other.getLeft() &&
             this->getLeft()+xOffset <= other.getRight() &&
