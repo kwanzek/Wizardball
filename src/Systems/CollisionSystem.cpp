@@ -31,25 +31,29 @@ void CollisionSystem::update(float deltaTime)
         CollisionComponent* collisionComponent = iter->second;
 
         //Need to get the velocity and transform components
-        TransformComponent* transformComponent;
+        TransformComponent* transformComponent = NULL;
         bool hasGroundedCollision = false;
         std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
         if (it != componentManager->transformComponents.end())
         {
             transformComponent = it->second;
         }
+        else
+        {
+            continue;
+        }
 
-        VelocityComponent* velocityComponent;
+        VelocityComponent* velocityComponent = NULL;
         std::unordered_map<unsigned int, VelocityComponent*>::iterator velocityIt = componentManager->velocityComponents.find(entityID);
         if (velocityIt != componentManager->velocityComponents.end())
         {
             velocityComponent = velocityIt->second;
         }
-
-        if (transformComponent == NULL || velocityComponent == NULL)
+        else
         {
             continue;
         }
+
         //Check bounding box collision, adding player dX and dY
         Rectangle newPos = Rectangle(
             collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime,
@@ -62,38 +66,28 @@ void CollisionSystem::update(float deltaTime)
             otherIter != componentManager->collisionComponents.end(); otherIter++)
         {
             int otherEntityID = otherIter->first;
+            if (entityID == otherEntityID)
+            {
+                continue;
+            }
             CollisionComponent* otherCollision = otherIter->second;
             std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
-            TransformComponent* otherTransform;
-            if (otherIt != componentManager->transformComponents.end())
-            {
-                otherTransform = it->second;
-            }
 
-            if (shouldCollide(*collisionComponent, *otherCollision) && otherTransform != NULL)
+            if (shouldCollide(*collisionComponent, *otherCollision))
             {
-                if (newPos.collidesWith(otherCollision->boundingBox))
+                if (newPos.collidesWith(otherCollision->boundingBox, Axis::X))
                 {
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
-                    //We want to limit the entity's dy and dx based on which side the collision happened
-                    //And how far we can go
+                    //For now we are just going to set the velocity to 0 for all entities
+                    //We might want to make the ball bounce off things eventually which will have different physics
 
-                    if (collisionSide == sides::LEFT)
-                    {
-                        velocityComponent->dx = std::max(velocityComponent->dx,
-                            static_cast<float>(otherCollision->boundingBox.getRight() - collisionComponent->boundingBox.getLeft())+1);
-                    }
-                    else if (collisionSide == sides::RIGHT)
-                    {
-                        velocityComponent->dx = std::min(velocityComponent->dx,
-                            static_cast<float>(otherCollision->boundingBox.getLeft() - collisionComponent->boundingBox.getRight())-1);
-                    }
-                    newPos.x = collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime;
+                    velocityComponent->dx = 0;
                 }
 
             }
 
         }
+        newPos.x = transformComponent->x + (velocityComponent->dx * deltaTime);
 
         for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
@@ -101,40 +95,28 @@ void CollisionSystem::update(float deltaTime)
             int otherEntityID = otherIter->first;
             CollisionComponent* otherCollision = otherIter->second;
             std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
-            TransformComponent* otherTransform;
-            if (otherIt != componentManager->transformComponents.end())
-            {
-                otherTransform = it->second;
-            }
 
-            if (shouldCollide(*collisionComponent, *otherCollision) && otherTransform != NULL)
+            if (shouldCollide(*collisionComponent, *otherCollision))
             {
-                if (newPos.collidesWith(otherCollision->boundingBox))
+                if (newPos.collidesWith(otherCollision->boundingBox, Axis::Y))
                 {
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
-                    //We want to limit the entity's dy and dx based on which side the collision happened
-                    //And how far we can go
-
-                    if (collisionSide == sides::TOP)
+                    velocityComponent->dy = 0;
+                    if (collisionSide == sides::BOTTOM)
                     {
-                        velocityComponent->dy = std::max(velocityComponent->dy,
-                            static_cast<float>(otherCollision->boundingBox.getBottom() - collisionComponent->boundingBox.getTop()));
-                    }
-                    else if (collisionSide == sides::BOTTOM)
-                    {
-                        velocityComponent->dy = std::min(velocityComponent->dy,
-                            static_cast<float>(otherCollision->boundingBox.getTop() - collisionComponent->boundingBox.getBottom()));
                         hasGroundedCollision = true;
                     }
-                    newPos.y = collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime;
                 }
 
             }
 
         }
+        newPos.y = transformComponent->y + (velocityComponent->dy * deltaTime);
+
         transformComponent->grounded = hasGroundedCollision;
-        //collisionComponent->boundingBox.x = newPos.x;
-        //collisionComponent->boundingBox.y = newPos.y;
+        velocityComponent = NULL;
+        transformComponent = NULL;
+        collisionComponent = NULL;
     }
 }
 

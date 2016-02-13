@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <map>
 #include <vector>
+#include "Constants.h"
 
 class Game;
 
@@ -15,12 +16,6 @@ struct JoystickControls
     std::map<int, bool> heldButtons;
     std::map<int, bool> pressedButtons;
     std::map<int, bool> releasedButtons;
-};
-
-enum Axis
-{
-    XAXIS,
-    YAXIS
 };
 
 class InputHandler
@@ -36,7 +31,7 @@ class InputHandler
         void joyButtonDown(SDL_Event& event);
         void joyButtonUp(SDL_Event& event);
 
-        float getJoyAxis(SDL_JoystickID joystickID, Axis axis);
+        float getJoyAxis(SDL_JoystickID joystickID, Axis::Axis axis);
         bool wasJoyButtonPressed(SDL_JoystickID, int button);
         bool wasJoyButtonReleased(SDL_JoystickID, int button);
         bool isJoyButtonHeld(SDL_JoystickID, int button);

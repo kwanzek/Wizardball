@@ -51,7 +51,6 @@ void Game::gameLoop()
 
     while(this->isRunning)
     {
-
         lastUpdateTimeMS = currentTimeMS;
         currentTimeMS = SDL_GetTicks();
         float deltaTime = std::min((currentTimeMS - lastUpdateTimeMS) / 1000.0f, 0.016f);

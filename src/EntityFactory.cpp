@@ -23,7 +23,7 @@ EntityFactory::~EntityFactory()
 unsigned int EntityFactory::createPlayer()
 {
     unsigned int eID = _entityManager->createEntity();
-    _componentManager->makeTransformComponent(eID, 300, 100);
+    _componentManager->makeTransformComponent(eID, 350, 100);
 
     //This should be handled more organically to allow for more players
     //And it would be nice if it could be handled during gameplay rather than just player creation
