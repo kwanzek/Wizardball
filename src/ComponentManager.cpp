@@ -47,12 +47,24 @@ PlayerInputComponent* ComponentManager::makePlayerInputComponent(
     SDL_Scancode left,
     SDL_Scancode right,
     SDL_Scancode fireball,
+    SDL_Scancode pickup,
     SDL_JoystickID joystickID,
     int joyJumpButton,
-    int joyFireballButton
+    int joyFireballButton,
+    int joyPickupButton
     )
 {
-    PlayerInputComponent* component = new PlayerInputComponent(jump, left, right, fireball, joystickID, joyJumpButton, joyFireballButton);
+    PlayerInputComponent* component = new PlayerInputComponent(
+        jump,
+        left,
+        right,
+        fireball,
+        pickup,
+        joystickID,
+        joyJumpButton,
+        joyFireballButton,
+        joyPickupButton
+    );
     playerInputComponents.insert(std::make_pair(eid, component));
     return component;
 }
@@ -83,5 +95,12 @@ StateComponent* ComponentManager::makeStateComponent(unsigned int eid, std::stri
 {
     StateComponent* component = new StateComponent(state);
     stateComponents.insert(std::make_pair(eid, component));
+    return component;
+}
+
+PickupComponent* ComponentManager::makePickupComponent(unsigned int eid, unsigned int othereid)
+{
+    PickupComponent* component = new PickupComponent(othereid);
+    pickupComponents.insert(std::make_pair(othereid, component));
     return component;
 }

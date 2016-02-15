@@ -96,6 +96,18 @@ void PlayerControlSystem::update(float deltaTime)
                 entityFactory->createFireball(Vector2(transformComponent->x, transformComponent->y), fireballSpeed, 0);
             }
 
+            if (this->didAction(PlayerCommand::PICKUP), *playerInputComponent)
+            {
+                //if this eID has pickup command
+                //Throw the ball (add velocity component to ball and remove pickupcomponent from player
+                //else:
+
+                //I think I want to do this by firing an event
+                //PickupCommand(PlayerEID, int x, int y)
+                //The event will look for nearby Ball objects, delete their velocity and add a Pickup component to
+                //The eID that fired the event
+            }
+
         }
 
     }
@@ -117,6 +129,9 @@ bool PlayerControlSystem::didAction(PlayerCommand playerCommand, PlayerInputComp
         case FIREBALL:
             return (inputHandler->wasKeyPressed(playerInputComponent.fireballCommand)
                 || inputHandler->wasJoyButtonPressed(playerInputComponent.joystickID, playerInputComponent.joyFireballButton));
+        case PICKUP:
+            return (inputHandler->wasKeyPressed(playerInputComponent.pickupCommand)
+                || inputHandler->wasJoyButtonPressed(playerInputComponent.joystickID, playerInputComponent.joyPickupButton));
         default:
             return false;
     }

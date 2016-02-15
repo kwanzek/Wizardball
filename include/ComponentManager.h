@@ -12,6 +12,7 @@
 #include "Components/VelocityComponent.h"
 #include "Components/CollisionComponent.h"
 #include "Components/StateComponent.h"
+#include "Components/PickupComponent.h"
 
 #include "Graphics.h"
 
@@ -34,6 +35,7 @@ class ComponentManager
         std::unordered_map<unsigned int, VelocityComponent *> velocityComponents;
         std::unordered_map<unsigned int, CollisionComponent *> collisionComponents;
         std::unordered_map<unsigned int, StateComponent *> stateComponents;
+        std::unordered_map<unsigned int, PickupComponent *> pickupComponents;
 
         TransformComponent* makeTransformComponent(unsigned int eid, float x, float y);
         PlayerInputComponent* makePlayerInputComponent(
@@ -42,9 +44,11 @@ class ComponentManager
             SDL_Scancode left,
             SDL_Scancode right,
             SDL_Scancode fireball,
+            SDL_Scancode pickup,
             SDL_JoystickID joystickID = -1,
             int joyButtonJump = -1,
-            int joyButtonFireball = -1
+            int joyButtonFireball = -1,
+            int joyButtonPickup = -1
         );
         PlayerControllerComponent* makePlayerControllerComponent(unsigned int eid);
         VelocityComponent* makeVelocityComponent(
@@ -71,6 +75,7 @@ class ComponentManager
         );
 
         StateComponent* makeStateComponent(unsigned int eid, std::string string);
+        PickupComponent* makePickupComponent(unsigned int eid, unsigned int othereid);
 
         Graphics* graphics;
 

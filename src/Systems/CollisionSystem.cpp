@@ -105,7 +105,7 @@ void CollisionSystem::update(float deltaTime)
                         }
                         else
                         {
-                            if (std::abs(newPos.y - otherCollision->boundingBox.getTop()) < collisionComponent->boundingBox.getHeight())
+                            if (std::abs(newPos.y - otherCollision->boundingBox.getTop()) < collisionComponent->boundingBox.getHeight()-1)
                             {
                                 velocityComponent->dx = 0;
                             }
@@ -130,7 +130,7 @@ void CollisionSystem::update(float deltaTime)
                     sides::Side collisionSide = newPos.getCollisionSide(otherCollision->boundingBox);
                     if (collisionSide == sides::TOP || collisionSide == sides::BOTTOM)
                     {
-                        if (std::abs(newPos.x - otherCollision->boundingBox.getLeft()) < collisionComponent->boundingBox.getWidth())
+                        if (std::abs(newPos.x - otherCollision->boundingBox.getLeft()) < collisionComponent->boundingBox.getWidth()-1)
                         {
                             velocityComponent->dy = 0;
                             if (collisionSide == sides::BOTTOM)
