@@ -10,7 +10,7 @@ public:
         this->eid = eid;
     };
 
-    int eid;
+   unsigned int eid;
 };
 
 #endif // PICKUPCOMPONENT_H

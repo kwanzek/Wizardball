@@ -7,7 +7,6 @@
 
 #include "EntityManager.h"
 #include "EntityFactory.h"
-#include "ComponentManager.h"
 #include "InputHandler.h"
 #include "Graphics.h"
 #include "Level.h"

@@ -4,7 +4,6 @@
 #include <SDL.h>
 #include "EntityFactory.h"
 #include "EntityManager.h"
-#include "ComponentManager.h"
 #include "InputHandler.h"
 #include "Level.h"
 #include "System.h"
@@ -20,7 +19,6 @@ class Space
         virtual ~Space();
         EntityFactory entityFactory;
         EntityManager entityManager;
-        ComponentManager componentManager;
         InputHandler inputHandler;
         Level level;
 

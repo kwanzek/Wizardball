@@ -2,19 +2,27 @@
 
 #include <unordered_map>
 #include <cmath>
+#include <assert.h>
 #include <iostream>
 
 CollisionSystem::CollisionSystem():
     System()
 {
-    //ctor
+    components.reserve(100);
+    handles.reserve(100);
 }
 
-CollisionSystem::CollisionSystem(ComponentManager* componentManager) :
+CollisionSystem::CollisionSystem(TransformSystem* transformSystem, MovementSystem* movementSystem) :
     System(),
-    componentManager(componentManager)
+    transformSystem(transformSystem),
+    movementSystem(movementSystem)
 {
-
+    components.reserve(65535);
+    handles.reserve(65535);
+    for (unsigned int i = 0; i < handles.capacity(); ++i)
+    {
+        handles[i] = -1;
+    }
 }
 
 CollisionSystem::~CollisionSystem()
@@ -24,16 +32,16 @@ CollisionSystem::~CollisionSystem()
 
 void CollisionSystem::update(float deltaTime)
 {
-    for (std::unordered_map<unsigned int, CollisionComponent*>::iterator iter = componentManager->collisionComponents.begin();
+    /*for (std::unordered_map< int, CollisionComponent*>::iterator iter = componentManager->collisionComponents.begin();
         iter != componentManager->collisionComponents.end(); iter++)
     {
-        int entityID = iter->first;
+       unsigned int entityID = iter->first;
         CollisionComponent* collisionComponent = iter->second;
 
         //Need to get the velocity and transform components
         TransformComponent* transformComponent = NULL;
         bool hasGroundedCollision = false;
-        std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
+        std::unordered_map< int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
         if (it != componentManager->transformComponents.end())
         {
             transformComponent = it->second;
@@ -44,7 +52,7 @@ void CollisionSystem::update(float deltaTime)
         }
 
         VelocityComponent* velocityComponent = NULL;
-        std::unordered_map<unsigned int, VelocityComponent*>::iterator velocityIt = componentManager->velocityComponents.find(entityID);
+        std::unordered_map< int, VelocityComponent*>::iterator velocityIt = componentManager->velocityComponents.find(entityID);
         if (velocityIt != componentManager->velocityComponents.end())
         {
             velocityComponent = velocityIt->second;
@@ -62,16 +70,16 @@ void CollisionSystem::update(float deltaTime)
             collisionComponent->boundingBox.getHeight()
         );
 
-        for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
+        for (std::unordered_map< int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
         {
-            int otherEntityID = otherIter->first;
+           unsigned int otherEntityID = otherIter->first;
             if (entityID == otherEntityID)
             {
                 continue;
             }
             CollisionComponent* otherCollision = otherIter->second;
-            std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
+            std::unordered_map< int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
 
             if (shouldCollide(*collisionComponent, *otherCollision))
             {
@@ -85,7 +93,7 @@ void CollisionSystem::update(float deltaTime)
                         if (collisionComponent->layer == CollisionLayer::PROJECTILE && otherCollision->layer == CollisionLayer::BALL)
                         {
                             VelocityComponent* otherVelocity = NULL;
-                            std::unordered_map<unsigned int, VelocityComponent*>::iterator otherVelocityIt = componentManager->velocityComponents.find(otherEntityID);
+                            std::unordered_map< int, VelocityComponent*>::iterator otherVelocityIt = componentManager->velocityComponents.find(otherEntityID);
                             if (otherVelocityIt != componentManager->velocityComponents.end())
                             {
                                 otherVelocity = otherVelocityIt->second;
@@ -116,12 +124,12 @@ void CollisionSystem::update(float deltaTime)
         }
         newPos.x = transformComponent->x + (velocityComponent->dx * deltaTime);
 
-        for (std::unordered_map<unsigned int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
+        for (std::unordered_map< int, CollisionComponent*>::iterator otherIter = componentManager->collisionComponents.begin();
             otherIter != componentManager->collisionComponents.end(); otherIter++)
         {
-            int otherEntityID = otherIter->first;
+           unsigned int otherEntityID = otherIter->first;
             CollisionComponent* otherCollision = otherIter->second;
-            std::unordered_map<unsigned int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
+            std::unordered_map< int, TransformComponent*>::iterator otherIt = componentManager->transformComponents.find(otherEntityID);
 
             if (shouldCollide(*collisionComponent, *otherCollision))
             {
@@ -151,7 +159,50 @@ void CollisionSystem::update(float deltaTime)
         velocityComponent = NULL;
         transformComponent = NULL;
         collisionComponent = NULL;
+    }*/
+}
+
+CollisionComponent& CollisionSystem::addComponent(
+    int eid,
+    float x,
+    float y,
+    float width,
+    float height,
+    CollisionLayer::Layer layer
+)
+{
+    components.push_back(CollisionComponent(eid, x, y, width, height, layer));
+    handles[eid] = components.size()-1;
+    return components[components.size()-1];
+}
+
+bool CollisionSystem::deleteComponent(int eid)
+{
+    if (eid < handles.capacity())
+    {
+        int index = handles[eid];
+        components[index] = components[components.size()-1];
+        components.pop_back();
+        handles[components[index].eid] = index;
+        handles[eid] = -1;
+        return true;
     }
+    return false;
+}
+
+bool CollisionSystem::hasComponent(int eid)
+{
+    if (eid < handles.capacity())
+    {
+        return handles[eid] != -1;
+    }
+    return false;
+}
+
+CollisionComponent& CollisionSystem::getComponent(int eid)
+{
+    assert (eid < handles.capacity() && this->hasComponent(eid));
+    return components[handles[eid]];
 }
 
 bool CollisionSystem::shouldCollide(CollisionComponent& collider, CollisionComponent& other)

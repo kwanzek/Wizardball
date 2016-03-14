@@ -1,5 +1,4 @@
 #include "EntityManager.h"
-#include "Entity.h"
 #include <climits>
 #include <iostream>
 
@@ -14,19 +13,20 @@ EntityManager::~EntityManager()
     //dtor
 }
 
-unsigned int EntityManager::createEntity()
+int EntityManager::createEntity()
 {
-    unsigned int eID = this->getID();
+     int eID = this->getID();
     this->entities.push_back(eID);
     return eID;
 }
 
-unsigned int EntityManager::getID()
+ int EntityManager::getID()
 {
+    unsigned int temp = _previousID;
+    _previousID++;
     if (_previousID == UINT_MAX)
     {
         _previousID = 0;
     }
-    _previousID++;
-    return _previousID;
+    return temp;
 }

@@ -8,13 +8,13 @@ class EntityManager
     public:
         EntityManager();
         ~EntityManager();
-        unsigned int createEntity();
-        unsigned int _previousID;
+       int createEntity();
+       int _previousID;
 
     protected:
     private:
-        unsigned int getID();
-        std::vector<unsigned int> entities;
+       int getID();
+        std::vector<int> entities;
 };
 
 #endif // ENTITYMANAGER_H

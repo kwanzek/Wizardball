@@ -38,18 +38,7 @@ class ComponentManager
         std::unordered_map<unsigned int, PickupComponent *> pickupComponents;
 
         TransformComponent* makeTransformComponent(unsigned int eid, float x, float y);
-        PlayerInputComponent* makePlayerInputComponent(
-            unsigned int eid,
-            SDL_Scancode jump,
-            SDL_Scancode left,
-            SDL_Scancode right,
-            SDL_Scancode fireball,
-            SDL_Scancode pickup,
-            SDL_JoystickID joystickID = -1,
-            int joyButtonJump = -1,
-            int joyButtonFireball = -1,
-            int joyButtonPickup = -1
-        );
+
         PlayerControllerComponent* makePlayerControllerComponent(unsigned int eid);
         VelocityComponent* makeVelocityComponent(
             unsigned int eid,
@@ -74,7 +63,6 @@ class ComponentManager
             float timeToUpdate = 1.f
         );
 
-        StateComponent* makeStateComponent(unsigned int eid, std::string string);
         PickupComponent* makePickupComponent(unsigned int eid, unsigned int othereid);
 
         Graphics* graphics;

@@ -75,7 +75,7 @@ void Game::gameLoop()
             {
                 if (gameState == GameState::GAMEPLAY)
                 {
-                    gameState = GameState::MAINMENU;
+                    //gameState = GameState::MAINMENU;
                 }
                 else if (gameState == GameState::MAINMENU)
                 {
@@ -108,29 +108,50 @@ void Game::setupSpaces()
     //Set up gameplay space
     this->gameplay = new Space("GAMEPLAY", *this->inputHandler);
     this->gameplay->entityManager = EntityManager();
-    this->gameplay->componentManager = ComponentManager(this->graphics);
+
+    TransformSystem* gameplayTransformSystem = new TransformSystem();
+    StateSystem* gameplayStateSystem = new StateSystem();
+    PlayerInputSystem* gameplayPIS = new PlayerInputSystem();
+    MovementSystem* gameplayMovementSystem = new MovementSystem(gameplayTransformSystem);
+    PlayerControlSystem* gameplayPCS = new PlayerControlSystem(this->inputHandler, gameplayTransformSystem, gameplayMovementSystem, gameplayStateSystem, gameplayPIS);
+    CollisionSystem* gameplayCollisionSystem = new CollisionSystem(gameplayTransformSystem, gameplayMovementSystem);
+    RenderSystem* gameplayRenderSystem = new RenderSystem(this->graphics, gameplayTransformSystem, gameplayStateSystem);
+
+    gameplay->addSystem(gameplayTransformSystem);
+    gameplay->addSystem(gameplayStateSystem);
+    gameplay->addSystem(gameplayPIS);
+    gameplay->addSystem(gameplayPCS);
+    gameplay->addSystem(gameplayCollisionSystem);
+    gameplay->addSystem(gameplayMovementSystem);
+    gameplay->renderSystem = gameplayRenderSystem;
+
     this->gameplay->entityFactory = EntityFactory(
         &this->gameplay->entityManager,
-        &this->gameplay->componentManager,
-        this->inputHandler
+        this->inputHandler,
+        gameplayCollisionSystem,
+        gameplayMovementSystem,
+        gameplayPCS,
+        gameplayPIS,
+        gameplayRenderSystem,
+        gameplayStateSystem,
+        gameplayTransformSystem
     );
 
-    gameplay->addSystem(new PlayerControlSystem(&gameplay->componentManager, &gameplay->entityFactory, this->inputHandler));
-    gameplay->addSystem(new CollisionSystem(&gameplay->componentManager));
-    gameplay->addSystem(new MovementSystem(&gameplay->componentManager));
-    gameplay->renderSystem = new RenderSystem(&gameplay->componentManager, this->graphics);
+    gameplayPCS->entityFactory = &this->gameplay->entityFactory;
 
     //Set up menu
+    /*
     this->mainmenu = new Space("MAINMENU", *this->inputHandler);
     this->mainmenu->entityManager = EntityManager();
-    this->mainmenu->componentManager = ComponentManager(this->graphics);
     this->mainmenu->entityFactory = EntityFactory(
         &this->mainmenu->entityManager,
-        &this->mainmenu->componentManager,
         this->inputHandler
     );
 
-    mainmenu->renderSystem = new RenderSystem(&mainmenu->componentManager, this->graphics);
+    TransformSystem menuTransformSystem = new TransformSystem();
+
+    mainmenu->addSystem(menuTransformSystem);
+    mainmenu->renderSystem = new RenderSystem(this->graphics, *menuTransformSystem);*/
 }
 
 void Game::loadLevel(std::string levelName, Space& space)

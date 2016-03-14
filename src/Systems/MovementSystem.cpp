@@ -2,17 +2,26 @@
 #include <unordered_map>
 #include <iterator>
 #include <math.h>
+#include <assert.h>
 
 MovementSystem::MovementSystem():
     System()
 {
-    //ctor
+    components.reserve(100);
+    handles.reserve(100);
+    //components.emplace_back(0,0.f,0.f, 0.f, 0.f, 0.f);
 }
 
-MovementSystem::MovementSystem(ComponentManager* componentManager):
-    System()
+MovementSystem::MovementSystem(TransformSystem* transformSystem):
+    System(),
+    transformSystem(transformSystem)
 {
-    this->componentManager = componentManager;
+    components.reserve(65535);
+    handles.reserve(65535);
+    for (unsigned int i = 0; i < handles.capacity(); ++i)
+    {
+        handles[i] = -1;
+    }
 }
 
 MovementSystem::~MovementSystem()
@@ -22,33 +31,60 @@ MovementSystem::~MovementSystem()
 
 void MovementSystem::update(float deltaTime)
 {
-    for (std::unordered_map<unsigned int, VelocityComponent*>::iterator iter = componentManager->velocityComponents.begin();
-        iter != componentManager->velocityComponents.end(); iter++)
+
+    for (int i = 0; i < this->components.size(); ++i)
     {
-        int entityID = iter->first;
-        VelocityComponent* velocityComponent = iter->second;
-
-        std::unordered_map<unsigned int, TransformComponent*>::iterator it = componentManager->transformComponents.find(entityID);
-        if (it != componentManager->transformComponents.end())
+        VelocityComponent& velocityComponent = components[i];
+        int entityID = velocityComponent.eid;
+        if (transformSystem->hasComponent(entityID))
         {
-            TransformComponent* transformComponent = it->second;
-            transformComponent->x += (velocityComponent->dx * deltaTime);
-            if (!transformComponent->grounded && velocityComponent->dy < velocityComponent->maxYSpeed && !velocityComponent->ignoreGravity)
-            {
-                velocityComponent->dy += globals::GRAVITY * deltaTime;
-            }
-            velocityComponent->dy = std::min(velocityComponent->dy, velocityComponent->maxYSpeed);
-            transformComponent->y += (velocityComponent->dy * deltaTime);
+            TransformComponent& transformComponent = transformSystem->getComponent(entityID);
 
-            std::unordered_map<unsigned int, CollisionComponent*>::iterator collisionIt = componentManager->collisionComponents.find(entityID);
-            if (collisionIt != componentManager->collisionComponents.end())
+            transformComponent.x += (velocityComponent.dx * deltaTime);
+            if (!transformComponent.grounded && velocityComponent.dy < velocityComponent.maxYSpeed && !velocityComponent.ignoreGravity)
             {
-                CollisionComponent* collisionComponent = collisionIt->second;
-                collisionComponent->boundingBox.x = ceil(transformComponent->x);
-                collisionComponent->boundingBox.y = ceil(transformComponent->y);
+                velocityComponent.dy += globals::GRAVITY * deltaTime;
             }
+            velocityComponent.dy = std::min(velocityComponent.dy, velocityComponent.maxYSpeed);
+            transformComponent.y += (velocityComponent.dy * deltaTime);
         }
-
-
     }
+
+}
+
+VelocityComponent& MovementSystem::addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed)
+{
+    components.push_back(VelocityComponent(eid,dx,dy, maxXSpeedGround, maxXSpeedAir, maxYSpeed));
+    handles[eid] = components.size()-1;
+    return components[components.size()-1];
+}
+
+bool MovementSystem::deleteComponent(int eid)
+{
+    if (eid < handles.capacity())
+    {
+        int index = handles[eid];
+        components[index] = components[components.size()-1];
+        components.pop_back();
+        handles[components[index].eid] = index;
+        handles[eid] = -1;
+        return true;
+    }
+    return false;
+
+}
+
+bool MovementSystem::hasComponent(int eid)
+{
+    if (eid < handles.capacity())
+    {
+        return handles[eid] != -1;
+    }
+    return false;
+}
+
+VelocityComponent& MovementSystem::getComponent(int eid)
+{
+    assert(eid < handles.capacity() && this->hasComponent(eid));
+    return components[handles[eid]];
 }

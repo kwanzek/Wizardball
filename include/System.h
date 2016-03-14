@@ -7,7 +7,6 @@ class System
     public:
         System() {};
         virtual void update(float deltaTime) = 0;
-        ComponentManager* componentManager;
     protected:
     private:
 };

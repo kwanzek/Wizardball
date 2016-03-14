@@ -1,7 +1,9 @@
-#ifndef PLAYERINPUTCOMPONENT_H
-#define PLAYERINPUTCOMPONENT_H
+#ifndef PLAYERINPUTSYSTEM_H
+#define PLAYERINPUTSYSTEM_H
 
+#include <System.h>
 #include <SDL.h>
+#include <vector>
 
 enum PlayerCommand
 {
@@ -12,12 +14,10 @@ enum PlayerCommand
     PICKUP
 };
 
-class PlayerInputComponent
+struct PlayerInputComponent
 {
-public:
-
     inline PlayerInputComponent (
-        unsigned int eid,
+        int eid,
         SDL_Scancode jump,
         SDL_Scancode left,
         SDL_Scancode right,
@@ -40,7 +40,7 @@ public:
         joyFireballButton(joyFireballButton),
         joyPickupButton(joyPickupButton)
     {};
-    unsigned int eid;
+    int eid;
     SDL_Scancode jumpCommand;
     SDL_Scancode leftCommand;
     SDL_Scancode rightCommand;
@@ -52,4 +52,34 @@ public:
     int joyPickupButton;
 };
 
-#endif // PLAYERINPUTCOMPONENT_H
+class PlayerInputSystem : public System
+{
+    public:
+        PlayerInputSystem();
+        virtual ~PlayerInputSystem();
+        void update(float deltaTime);
+
+        PlayerInputComponent& addComponent(
+             int eid,
+            SDL_Scancode jump,
+            SDL_Scancode left,
+            SDL_Scancode right,
+            SDL_Scancode fireball,
+            SDL_Scancode pickup,
+            SDL_JoystickID joystickID = -1,
+            int joyButtonJump = -1,
+            int joyButtonFireball = -1,
+            int joyButtonPickup = -1
+        );
+        bool deleteComponent(int eid);
+        bool hasComponent(int eid);
+        PlayerInputComponent& getComponent(int eid);
+
+        std::vector<PlayerInputComponent> components;
+        std::vector<int> handles;
+
+    protected:
+    private:
+};
+
+#endif // PLAYERINPUTSYSTEM_H
