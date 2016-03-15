@@ -54,6 +54,11 @@ class CollisionSystem : public System
         std::vector<int> handles;
 
         bool shouldCollide(CollisionComponent& collider, CollisionComponent& other);
+        void handleCollision(
+            CollisionComponent& collisionComponent,
+            VelocityComponent& velocityComponent,
+            CollisionComponent& otherCollision
+        );
     protected:
     private:
 };

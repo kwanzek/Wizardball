@@ -32,6 +32,45 @@ CollisionSystem::~CollisionSystem()
 
 void CollisionSystem::update(float deltaTime)
 {
+    for (unsigned int i = 0; i < components.size(); ++i)
+    {
+        CollisionComponent& collisionComponent = components[i];
+        int eid = collisionComponent.eid;
+        if (transformSystem->hasComponent(eid) && movementSystem->hasComponent(eid))
+        {
+            bool hasGroundedCollision = false;
+            TransformComponent& transformComponent = transformSystem->getComponent(eid);
+            VelocityComponent& velocityComponent = movementSystem->getComponent(eid);
+
+            Rectangle newPos = Rectangle(
+                collisionComponent->boundingBox.getLeft() + velocityComponent->dx * deltaTime,
+                collisionComponent->boundingBox.getTop() + velocityComponent->dy * deltaTime,
+                collisionComponent->boundingBox.getWidth(),
+                collisionComponent->boundingBox.getHeight()
+            );
+            //Get forward Y
+            Axis axis = Axis::Y;
+            Direction forwardDir = velocityComponent.dy < 0 ? Direction::UP : Direction::DOWN;
+            for (unsigned int j = i+1; j < components.size(); ++j)
+            {
+                CollisionComponent& otherCollision = components[j];
+                int otherEID = otherCollision.eid;
+
+                if (shouldCollide(collisionComponent, otherCollision))
+                {
+                    if (transformSystem->hasComponent(otherEID))
+                    {
+                        TransformComponent& otherTransform = transformSystem->getComponent(otherEID);
+                        this->handleCollision(newPos, collisionComponent, transformComponent, otherCollision, otherTransform, axis)
+                    }
+                }
+            }
+
+            //Get forward X and do it again
+            axis = Axis::X;
+            forwardDir = velocityComponent.dx < 0 ? Direction::LEFT : Direction::DOWN;
+        }
+    }
     /*for (std::unordered_map< int, CollisionComponent*>::iterator iter = componentManager->collisionComponents.begin();
         iter != componentManager->collisionComponents.end(); iter++)
     {
@@ -160,6 +199,38 @@ void CollisionSystem::update(float deltaTime)
         transformComponent = NULL;
         collisionComponent = NULL;
     }*/
+}
+
+void CollisionSystem::handleCollision(
+    Rectangle& newPos;
+    CollisionComponent& collisionComponent,
+    VelocityComponent& velocityComponent,
+    CollisionComponent& otherCollision,
+    Axis axis,
+    float deltaTime
+)
+{
+    Direction forwardDir;
+    int edgeVal;
+    int otherEdgeVal;
+    if (axis == Axis::X)
+    {
+        forwardDir = velocityComponent.dx < 0 ? Direction::LEFT : Direction::RIGHT;
+        edgeVal = forwardDir == Direction::LEFT ? newPos.getLeft() : newPos.getRight();
+        otherEdgeVal = forwardDir == Direction::RIGHT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
+    }
+    else
+    {
+        forwardDir = velocityComponent.dy < 0 ? Direction::UP : Direction::DOWN;
+        edgeVal = forwardDir == Direction::UP ? newPos.getTop() : newPos.getBottom();
+        otherEdgeVal = forwardDir == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
+    }
+    //Get the difference of otherCol - newPos
+    //Calculate the velocity to get there (otherCol - newPos/deltaTime)
+    //Get min of abs val(curVelocity, newPos)
+    //Multiply by sign of othercol - newPos
+    //Set velocity (dx or dy) to that new value
+    //Set newPos = transformX + new Velocity * dx*deltaTime
 }
 
 CollisionComponent& CollisionSystem::addComponent(
