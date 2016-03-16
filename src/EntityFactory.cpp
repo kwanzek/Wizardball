@@ -65,7 +65,7 @@ int EntityFactory::createPlayer()
 
     playerControlSystem->addComponent(eID);
     movementSystem->addComponent(eID, 0, 0, 140, 100, 500);
-    collisionSystem->addComponent(eID, 100, 100, 16, 16, CollisionLayer::PLAYER);
+    collisionSystem->addComponent(eID, 350, 100, 16, 16, CollisionLayer::PLAYER);
 
     //Setup animations
 
@@ -105,9 +105,9 @@ int EntityFactory::createFireball(Vector2 position, float dx, float dy )
     return eID;
 }
 
- int EntityFactory::createBall()
+int EntityFactory::createBall()
 {
-     int eID = entityManager->createEntity();
+    int eID = entityManager->createEntity();
     transformSystem->addComponent(eID, 150, 150);
     renderSystem->addComponent(eID, 0, 0, 16, 16, "content/sprites/Ball.png");
     movementSystem->addComponent(eID, 0, 0, 0, 100, 100);

@@ -55,9 +55,13 @@ class CollisionSystem : public System
 
         bool shouldCollide(CollisionComponent& collider, CollisionComponent& other);
         void handleCollision(
+            Rectangle& newPos,
+            TransformComponent& transformComponent,
             CollisionComponent& collisionComponent,
             VelocityComponent& velocityComponent,
-            CollisionComponent& otherCollision
+            CollisionComponent& otherCollision,
+            Axis::Axis axis,
+            float deltaTime
         );
     protected:
     private:

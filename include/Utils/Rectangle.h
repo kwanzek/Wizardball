@@ -46,15 +46,13 @@ public:
     }
 
     //Takes in another Rectangle and checks if the two are colliding
-    const bool collidesWith(const Rectangle &other, Axis::Axis axis) const
+    const bool collidesWith(const Rectangle &other) const
     {
-        int xOffset = axis == Axis::Y ? 0 : 0;
-        int yOffset = axis == Axis::X ? 0 : 0;
         return
-            this->getRight()-xOffset >= other.getLeft() &&
-            this->getLeft()+xOffset <= other.getRight() &&
-            this->getTop()+yOffset <= other.getBottom() &&
-            this->getBottom()-yOffset >= other.getTop();
+            this->getRight() >= other.getLeft() &&
+            this->getLeft() <= other.getRight() &&
+            this->getTop() <= other.getBottom() &&
+            this->getBottom() >= other.getTop();
     }
 
     sides::Side getCollisionSide(const Rectangle &other)
