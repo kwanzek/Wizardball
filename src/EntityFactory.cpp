@@ -64,7 +64,7 @@ int EntityFactory::createPlayer()
     );
 
     playerControlSystem->addComponent(eID);
-    movementSystem->addComponent(eID, 0, 0, 140, 100, 500);
+    movementSystem->addComponent(eID, 0, 0, 140, 100, 300);
     collisionSystem->addComponent(eID, 350, 100, 16, 16, CollisionLayer::PLAYER);
 
     //Setup animations

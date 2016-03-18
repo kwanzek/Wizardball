@@ -1,6 +1,9 @@
 #include "Game.h"
 #include <iostream>
 #include <cmath>
+
+#define DEBUG_MODE true
+
 Game::Game()
 {
     //ctor
@@ -40,7 +43,7 @@ void Game::gameLoop()
 {
     SDL_Event event;
     gameplay->entityFactory.createPlayer();
-    gameplay->entityFactory.createBall();
+    //gameplay->entityFactory.createBall();
     this->loadLevel("test", *gameplay);
 
     float dt = 0.01f;
@@ -48,6 +51,11 @@ void Game::gameLoop()
 
     int currentTimeMS = SDL_GetTicks();
     int lastUpdateTimeMS = currentTimeMS;
+
+    #if DEBUG_MODE
+    bool pauseTicks = false;
+    bool advanceOneTick = false;
+    #endif // DEBUG_MODE
 
     while(this->isRunning)
     {
@@ -60,9 +68,31 @@ void Game::gameLoop()
         {
             while (SDL_PollEvent(&event) !=0)
             {
+
+                #if DEBUG_MODE
+                if (event.key.keysym.scancode == SDL_SCANCODE_5 && event.type == SDL_KEYDOWN)
+                {
+                    advanceOneTick = true;
+                }
+                if (event.key.keysym.scancode == SDL_SCANCODE_4 && event.type == SDL_KEYDOWN)
+                {
+                    pauseTicks = !pauseTicks;
+                }
+                #endif // DEBUG_MODE
+
                 this->events.push_back(event);
             }
+
             inputHandler->update(this->events);
+
+            #if DEBUG_MODE
+            if (pauseTicks && !advanceOneTick)
+            {
+                continue;
+            }
+            advanceOneTick = false;
+            #endif // DEBUG_MODE
+
             if (gameState == GameState::GAMEPLAY)
             {
                 gameplay->update(dt);

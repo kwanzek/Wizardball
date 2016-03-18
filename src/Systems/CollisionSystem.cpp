@@ -56,7 +56,10 @@ void CollisionSystem::update(float deltaTime)
 
 
 
-                std::cout << collisionComponent.boundingBox.getLeft() << ", " << collisionComponent.boundingBox.getTop() << std::endl;
+                std::cout << "ColXY: " << collisionComponent.boundingBox.x << ", " << collisionComponent.boundingBox.y << " ";
+                std::cout << "ColLeftTop: " << collisionComponent.boundingBox.getLeft() << ", " << collisionComponent.boundingBox.getTop() << " ";
+                std::cout << "NewPosXY: " << newPos.x << "," << newPos.y << " ";
+                std::cout << "NewPosLeftOP: " << newPos.getLeft() << ", " << newPos.getTop() << std::endl;
             }
             //Get forward Y
             Axis::Axis axis = Axis::Y;
