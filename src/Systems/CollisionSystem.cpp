@@ -51,45 +51,70 @@ void CollisionSystem::update(float deltaTime)
                 collisionComponent.boundingBox.getHeight()
             );
 
-            if (eid == 0)
-            {
+            Direction::Facing forwardDirX = velocityComponent.dx < 0 ? Direction::LEFT : Direction::RIGHT;
+            Direction::Facing forwardDirY = velocityComponent.dy < 0 ? Direction::UP : Direction::DOWN;
 
+            int forwardEdgeX = forwardDirX == Direction::LEFT ? collisionComponent.boundingBox.getLeft() : collisionComponent.boundingBox.getRight();
+            int forwardEdgeY = forwardDirY == Direction::UP ? collisionComponent.boundingBox.getTop() : collisionComponent.boundingBox.getBottom();
 
+            int wantToMoveToX = forwardDirX == Direction::LEFT ? newPos.getLeft() : newPos.getRight();
+            int wantToMoveToY = forwardDirY == Direction::UP ? newPos.getTop() : newPos.getBottom();
 
-                std::cout << "ColXY: " << collisionComponent.boundingBox.x << ", " << collisionComponent.boundingBox.y << " ";
-                std::cout << "ColLeftTop: " << collisionComponent.boundingBox.getLeft() << ", " << collisionComponent.boundingBox.getTop() << " ";
-                std::cout << "NewPosXY: " << newPos.x << "," << newPos.y << " ";
-                std::cout << "NewPosLeftOP: " << newPos.getLeft() << ", " << newPos.getTop() << std::endl;
-            }
-            //Get forward Y
-            Axis::Axis axis = Axis::Y;
-            Direction::Facing forwardDir = velocityComponent.dy < 0 ? Direction::UP : Direction::DOWN;
+            int canMoveDistanceX = wantToMoveToX - forwardEdgeX;
+            int canMoveDistanceY = wantToMoveToY - forwardEdgeY;
+
+            bool hasCollision = false;
+
             for (unsigned int j = i+1; j < components.size(); ++j)
             {
                 CollisionComponent& otherCollision = components[j];
                 if (shouldCollide(collisionComponent, otherCollision) && newPos.collidesWith(otherCollision.boundingBox))
                 {
-                    this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
-                    if (forwardDir == Direction::DOWN)
+                    int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
+                    int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
+                    if (otherEdgeY != forwardEdgeY && abs(otherEdgeX-forwardEdgeX) <= abs(canMoveDistanceX))
                     {
-                        hasGroundedCollision = true;
+                        hasCollision = true;
+                        canMoveDistanceX = otherEdgeX-forwardEdgeX;
                     }
+                    //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
                 }
             }
+            if (hasCollision)
+            {
+                velocityComponent.dx = canMoveDistanceX/deltaTime;
+            }
+            collisionComponent.boundingBox.x = transformComponent.x + velocityComponent.dx * deltaTime;
+            forwardEdgeX = forwardDirX == Direction::LEFT ? collisionComponent.boundingBox.getLeft() : collisionComponent.boundingBox.getRight();
+            hasCollision = false;
 
-            //Get forward X and do it again
-            axis = Axis::X;
             for (unsigned int j = i+1; j < components.size(); ++j)
             {
                 CollisionComponent& otherCollision = components[j];
                 if (shouldCollide(collisionComponent, otherCollision) && newPos.collidesWith(otherCollision.boundingBox))
                 {
-                    this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
+                    int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
+                    int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
+                    if (otherEdgeX != forwardEdgeX && abs(otherEdgeY-forwardEdgeY) <= abs(canMoveDistanceY))
+                    {
+                        hasCollision = true;
+                        if (forwardDirY == Direction::DOWN)
+                        {
+                            hasGroundedCollision = true;
+                        }
+                        canMoveDistanceY = otherEdgeY-forwardEdgeY;
+                    }
+                    //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
+
                 }
             }
+            if (hasCollision)
+            {
+                velocityComponent.dy = canMoveDistanceY/deltaTime;
+            }
+            collisionComponent.boundingBox.y = transformComponent.y + velocityComponent.dy * deltaTime;
+
             transformComponent.grounded = hasGroundedCollision;
-            collisionComponent.boundingBox.x = newPos.x;
-            collisionComponent.boundingBox.y = newPos.y;
         }
     }
 }
@@ -112,20 +137,25 @@ void CollisionSystem::handleCollision(
     if (axis == Axis::X)
     {
         forwardDir = velocityComponent.dx < 0 ? Direction::LEFT : Direction::RIGHT;
-        edgeVal = forwardDir == Direction::LEFT ? newPos.getLeft() : newPos.getRight();
+        edgeVal = forwardDir == Direction::LEFT ? collisionComponent.boundingBox.getLeft() : collisionComponent.boundingBox.getRight();
         otherEdgeVal = forwardDir == Direction::RIGHT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
+        if (forwardDir == Direction::LEFT && edgeVal <= otherEdgeVal)
+            return;
+        if (forwardDir == Direction::RIGHT && edgeVal >= otherEdgeVal)
+            return;
         curVelocity = velocityComponent.dx;
     }
     else
     {
         forwardDir = velocityComponent.dy < 0 ? Direction::UP : Direction::DOWN;
-        edgeVal = forwardDir == Direction::UP ? newPos.getTop() : newPos.getBottom();
+        edgeVal = forwardDir == Direction::UP ? collisionComponent.boundingBox.getTop() : collisionComponent.boundingBox.getBottom();
         otherEdgeVal = forwardDir == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
         curVelocity = velocityComponent.dy;
     }
     int diff = otherEdgeVal - edgeVal;
     float newVelocity = diff/deltaTime;
     newVelocity = std::min(abs(newVelocity), abs(curVelocity));
+    newVelocity = 0;
     if (forwardDir == Direction::UP || forwardDir == Direction::LEFT)
     {
         newVelocity *= -1;

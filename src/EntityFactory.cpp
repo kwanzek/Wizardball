@@ -40,7 +40,7 @@ int EntityFactory::createPlayer()
 {
     int eID = entityManager->createEntity();
 
-    transformSystem->addComponent(eID, 350, 100);
+    transformSystem->addComponent(eID, 250, 100);
 
     //This should be handled more organically to allow for more players
     //And it would be nice if it could be handled during gameplay rather than just player creation
@@ -65,7 +65,7 @@ int EntityFactory::createPlayer()
 
     playerControlSystem->addComponent(eID);
     movementSystem->addComponent(eID, 0, 0, 140, 100, 300);
-    collisionSystem->addComponent(eID, 350, 100, 16, 16, CollisionLayer::PLAYER);
+    collisionSystem->addComponent(eID, 250, 100, 16, 16, CollisionLayer::PLAYER);
 
     //Setup animations
 
