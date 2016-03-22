@@ -8,13 +8,16 @@
 
 struct VelocityComponent
 {
-    inline VelocityComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed) :
+    inline VelocityComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity) :
         eid(eid),
         dx(dx),
         dy(dy),
         maxXSpeedGround(maxXSpeedGround),
         maxXSpeedAir(maxXSpeedAir),
-        maxYSpeed(maxYSpeed)
+        maxYSpeed(maxYSpeed),
+        baseIgnoreGravityTime(baseIgnoreGravityTime),
+        currentIgnoreGravityTime(currentIgnoreGravityTime),
+        ignoreGravity(ignoreGravity)
     {}
     int eid;
     float dx;
@@ -22,9 +25,9 @@ struct VelocityComponent
     float maxXSpeedGround;
     float maxXSpeedAir;
     float maxYSpeed;
-    float baseIgnoreGravityTime = .3f;
-    float currentIgnoreGravityTime = 0;
-    bool ignoreGravity = false;
+    float baseIgnoreGravityTime;
+    float currentIgnoreGravityTime;
+    bool ignoreGravity;
 };
 
 class MovementSystem : public System
@@ -35,7 +38,7 @@ class MovementSystem : public System
         ~MovementSystem();
         void update(float deltaTime);
 
-        VelocityComponent& addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed);
+        VelocityComponent& addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime = 0.3f, float currentIgnoreGravityTime = 0.0f, bool ignoreGravity = false);
         bool deleteComponent(int eid);
         bool hasComponent(int eid);
         VelocityComponent& getComponent(int eid);

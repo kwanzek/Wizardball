@@ -100,7 +100,7 @@ int EntityFactory::createFireball(Vector2 position, float dx, float dy )
     int eID = entityManager->createEntity();
     transformSystem->addComponent(eID, position.x, position.y);
     renderSystem->addComponent(eID, 0, 0, 16, 16, "content/sprites/Fireball.png");
-    movementSystem->addComponent(eID, dx, dy, 100, 100, 100);
+    movementSystem->addComponent(eID, dx, dy, 100, 100, 100, 0.0f, 0.0f, true);
     collisionSystem->addComponent(eID, position.x, position.y, 16,16, CollisionLayer::PROJECTILE);
     return eID;
 }

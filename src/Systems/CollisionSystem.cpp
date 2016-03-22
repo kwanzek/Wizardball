@@ -43,7 +43,6 @@ void CollisionSystem::update(float deltaTime)
             bool hasGroundedCollision = false;
             TransformComponent& transformComponent = transformSystem->getComponent(eid);
             VelocityComponent& velocityComponent = movementSystem->getComponent(eid);
-
             Rectangle newPos = Rectangle(
                 collisionComponent.boundingBox.getLeft() + velocityComponent.dx * deltaTime,
                 collisionComponent.boundingBox.getTop() + velocityComponent.dy * deltaTime,
@@ -108,8 +107,10 @@ void CollisionSystem::update(float deltaTime)
 
                 }
             }
+
             if (hasCollision)
             {
+                velocityComponent.currentIgnoreGravityTime = 0.0f;
                 velocityComponent.dy = canMoveDistanceY/deltaTime;
             }
             collisionComponent.boundingBox.y = transformComponent.y + velocityComponent.dy * deltaTime;

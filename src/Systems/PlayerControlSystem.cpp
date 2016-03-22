@@ -96,6 +96,7 @@ void PlayerControlSystem::update(float deltaTime)
                 velocityComponent.dy = -1 * playerControllerComponent.jumpForce;
                 velocityComponent.ignoreGravity = true;
                 velocityComponent.currentIgnoreGravityTime = velocityComponent.baseIgnoreGravityTime;
+                transformComponent.grounded = false;
             }
 
             if (this->didAction(PlayerCommand::FIREBALL, playerInputComponent))

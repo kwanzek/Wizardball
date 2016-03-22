@@ -32,7 +32,8 @@ class PlayerControlSystem : public System
 {
     public:
         PlayerControlSystem();
-        PlayerControlSystem(InputHandler* inputHandler,
+        PlayerControlSystem(
+            InputHandler* inputHandler,
             TransformSystem* ts,
             MovementSystem* ms,
             StateSystem* ss,

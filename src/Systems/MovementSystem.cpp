@@ -3,6 +3,7 @@
 #include <iterator>
 #include <math.h>
 #include <assert.h>
+#include <iostream>
 
 MovementSystem::MovementSystem():
     System()
@@ -41,20 +42,23 @@ void MovementSystem::update(float deltaTime)
             TransformComponent& transformComponent = transformSystem->getComponent(entityID);
 
             transformComponent.x += (velocityComponent.dx * deltaTime);
-            if (!transformComponent.grounded && velocityComponent.dy < velocityComponent.maxYSpeed && !velocityComponent.ignoreGravity)
+
+            if (!transformComponent.grounded && velocityComponent.dy < velocityComponent.maxYSpeed && !velocityComponent.ignoreGravity && !velocityComponent.currentIgnoreGravityTime > 0)
             {
                 velocityComponent.dy += globals::GRAVITY * deltaTime;
             }
+
             velocityComponent.dy = std::min(velocityComponent.dy, velocityComponent.maxYSpeed);
-            transformComponent.y += (velocityComponent.dy * deltaTime);
+            transformComponent.y += floor(velocityComponent.dy * deltaTime);
+
         }
     }
 
 }
 
-VelocityComponent& MovementSystem::addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed)
+VelocityComponent& MovementSystem::addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity)
 {
-    components.push_back(VelocityComponent(eid,dx,dy, maxXSpeedGround, maxXSpeedAir, maxYSpeed));
+    components.push_back(VelocityComponent(eid,dx,dy, maxXSpeedGround, maxXSpeedAir, maxYSpeed, baseIgnoreGravityTime, currentIgnoreGravityTime, ignoreGravity));
     handles[eid] = components.size()-1;
     return components[components.size()-1];
 }
