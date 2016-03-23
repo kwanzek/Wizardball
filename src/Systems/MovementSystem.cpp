@@ -49,7 +49,8 @@ void MovementSystem::update(float deltaTime)
             }
 
             velocityComponent.dy = std::min(velocityComponent.dy, velocityComponent.maxYSpeed);
-            transformComponent.y += floor(velocityComponent.dy * deltaTime);
+            transformComponent.y += velocityComponent.dy * deltaTime;
+            transformComponent.y = (transformComponent.y);
 
         }
     }

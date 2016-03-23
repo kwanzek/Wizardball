@@ -42,6 +42,9 @@ void CollisionSystem::update(float deltaTime)
         {
             bool hasGroundedCollision = false;
             TransformComponent& transformComponent = transformSystem->getComponent(eid);
+            collisionComponent.boundingBox.x = static_cast<int>(transformComponent.x);
+            collisionComponent.boundingBox.y = static_cast<int>(transformComponent.y);
+
             VelocityComponent& velocityComponent = movementSystem->getComponent(eid);
             Rectangle newPos = Rectangle(
                 collisionComponent.boundingBox.getLeft() + velocityComponent.dx * deltaTime,
@@ -82,6 +85,7 @@ void CollisionSystem::update(float deltaTime)
             if (hasCollision)
             {
                 velocityComponent.dx = canMoveDistanceX/deltaTime;
+                transformComponent.x = collisionComponent.boundingBox.y;
             }
             collisionComponent.boundingBox.x = transformComponent.x + velocityComponent.dx * deltaTime;
             forwardEdgeX = forwardDirX == Direction::LEFT ? collisionComponent.boundingBox.getLeft() : collisionComponent.boundingBox.getRight();
@@ -111,9 +115,10 @@ void CollisionSystem::update(float deltaTime)
             if (hasCollision)
             {
                 velocityComponent.currentIgnoreGravityTime = 0.0f;
-                velocityComponent.dy = canMoveDistanceY/deltaTime;
+                //velocityComponent.dy = canMoveDistanceY/deltaTime;
+                velocityComponent.dy = 0;
+                transformComponent.y = collisionComponent.boundingBox.y;
             }
-            collisionComponent.boundingBox.y = transformComponent.y + velocityComponent.dy * deltaTime;
 
             transformComponent.grounded = hasGroundedCollision;
         }

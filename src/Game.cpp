@@ -43,7 +43,7 @@ void Game::gameLoop()
 {
     SDL_Event event;
     gameplay->entityFactory.createPlayer();
-    //gameplay->entityFactory.createBall();
+    gameplay->entityFactory.createBall();
     this->loadLevel("test", *gameplay);
 
     float dt = 0.01f;

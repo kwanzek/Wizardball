@@ -110,7 +110,7 @@ int EntityFactory::createBall()
     int eID = entityManager->createEntity();
     transformSystem->addComponent(eID, 150, 150);
     renderSystem->addComponent(eID, 0, 0, 16, 16, "content/sprites/Ball.png");
-    movementSystem->addComponent(eID, 0, 0, 0, 100, 100);
+    movementSystem->addComponent(eID, 0, 0, 100, 100, 100, 0, 0, false);
     collisionSystem->addComponent(eID, 150, 150, 16, 16, CollisionLayer::BALL);
     return eID;
 }

@@ -28,7 +28,7 @@ class TransformSystem : public System
         virtual ~TransformSystem();
         void update(float deltaTime);
 
-        TransformComponent& addComponent( int eid, float x, float y);
+        TransformComponent& addComponent( int eid, float x, float y, bool grounded = false );
         bool deleteComponent( int eid);
         bool hasComponent( int eid);
         TransformComponent& getComponent( int eid);

@@ -21,9 +21,9 @@ TransformSystem::~TransformSystem()
 void TransformSystem::update(float deltaTime)
 {}
 
-TransformComponent& TransformSystem::addComponent( int eid, float x, float y)
+TransformComponent& TransformSystem::addComponent( int eid, float x, float y, bool grounded )
 {
-    components.emplace_back(eid,x,y);
+    components.emplace_back(eid,x,y, grounded);
     handles[eid] = components.size()-1;
     return components[components.size()-1];
 }
