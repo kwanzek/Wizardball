@@ -85,7 +85,7 @@ void CollisionSystem::update(float deltaTime)
             if (hasCollision)
             {
                 velocityComponent.dx = canMoveDistanceX/deltaTime;
-                transformComponent.x = collisionComponent.boundingBox.y;
+                transformComponent.x = collisionComponent.boundingBox.x;
             }
             collisionComponent.boundingBox.x = transformComponent.x + velocityComponent.dx * deltaTime;
             forwardEdgeX = forwardDirX == Direction::LEFT ? collisionComponent.boundingBox.getLeft() : collisionComponent.boundingBox.getRight();
