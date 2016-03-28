@@ -13,7 +13,7 @@ PlayerControlSystem::PlayerControlSystem():
     handles.reserve(65535);
     for (unsigned int i = 0; i < handles.capacity(); ++i)
     {
-        handles[i] = -1;
+        handles.push_back(-1);
     }
 }
 
@@ -22,14 +22,16 @@ PlayerControlSystem::PlayerControlSystem(
     TransformSystem* ts,
     MovementSystem* ms,
     StateSystem* ss,
-    PlayerInputSystem* pis
+    PlayerInputSystem* pis,
+    PickupSystem* pickupSys
 ) :
     System(),
     inputHandler(inputHandler),
     transformSystem(ts),
     movementSystem(ms),
     stateSystem(ss),
-    playerInputSystem(pis)
+    playerInputSystem(pis),
+    pickupSystem(pickupSys)
 {
     components.reserve(65535);
     handles.reserve(65535);
@@ -109,16 +111,10 @@ void PlayerControlSystem::update(float deltaTime)
                 entityFactory->createFireball(Vector2(transformComponent.x, transformComponent.y), fireballSpeed, 0);
             }
 
-            if (this->didAction(PlayerCommand::PICKUP, playerInputComponent))
+            if (this->didAction(PlayerCommand::PICKUP, playerInputComponent) && pickupSystem->hasComponent(eid))
             {
-                //if this eID has pickup command
-                //Throw the ball (add velocity component to ball and remove pickupcomponent from player
-                //else:
-
-                //I think I want to do this by firing an event
-                //PickupCommand(PlayerEID,unsigned int x,unsigned int y)
-                //The event will look for nearby Ball objects, delete their velocity and add a Pickup component to
-                //The eID that fired the event
+                PickupComponent &pickupComponent = pickupSystem->getComponent(eid);
+                pickupSystem->throwBall(eid, pickupComponent.otherEID);
             }
         }
     }
@@ -184,4 +180,16 @@ bool PlayerControlSystem::didAction(PlayerCommand playerCommand, PlayerInputComp
             return false;
     }
 
+}
+
+void PlayerControlSystem::handleBallCollision(int eid, int otherEID)
+{
+    if (playerInputSystem->hasComponent(eid))
+    {
+        PlayerInputComponent& playerInputComponent = playerInputSystem->getComponent(eid);
+        if (this->didAction(PlayerCommand::PICKUP, playerInputComponent))
+        {
+            pickupSystem->pickupBall(eid, otherEID);
+        }
+    }
 }

@@ -14,16 +14,17 @@ CollisionSystem::CollisionSystem():
     handles.reserve(100);
 }
 
-CollisionSystem::CollisionSystem(TransformSystem* transformSystem, MovementSystem* movementSystem) :
+CollisionSystem::CollisionSystem(TransformSystem* transformSystem, MovementSystem* movementSystem, PlayerControlSystem* PCS) :
     System(),
     transformSystem(transformSystem),
-    movementSystem(movementSystem)
+    movementSystem(movementSystem),
+    playerControlSystem(PCS)
 {
     components.reserve(65535);
     handles.reserve(65535);
     for (unsigned int i = 0; i < handles.capacity(); ++i)
     {
-        handles[i] = -1;
+        handles.push_back(-1);
     }
 }
 
@@ -37,6 +38,10 @@ void CollisionSystem::update(float deltaTime)
     for (unsigned int i = 0; i < components.size(); ++i)
     {
         CollisionComponent& collisionComponent = components[i];
+        if (!collisionComponent.enabled)
+        {
+            continue;
+        }
         int eid = collisionComponent.eid;
         if (transformSystem->hasComponent(eid) && movementSystem->hasComponent(eid))
         {
@@ -67,19 +72,26 @@ void CollisionSystem::update(float deltaTime)
 
             bool hasCollision = false;
 
-            for (unsigned int j = i+1; j < components.size(); ++j)
+            for (unsigned int j = 0; j < components.size(); ++j)
             {
-                CollisionComponent& otherCollision = components[j];
-                if (shouldCollide(collisionComponent, otherCollision) && newPos.collidesWith(otherCollision.boundingBox))
+                if (j != i)
                 {
-                    int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
-                    int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
-                    if (otherEdgeY != forwardEdgeY && abs(otherEdgeX-forwardEdgeX) <= abs(canMoveDistanceX))
+                    CollisionComponent& otherCollision = components[j];
+                    if (otherCollision.enabled && shouldCollide(collisionComponent, otherCollision) && newPos.collidesWith(otherCollision.boundingBox))
                     {
-                        hasCollision = true;
-                        canMoveDistanceX = otherEdgeX-forwardEdgeX;
+                        int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
+                        int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
+                        if (otherEdgeY != forwardEdgeY && abs(otherEdgeX-forwardEdgeX) <= abs(canMoveDistanceX))
+                        {
+                            hasCollision = true;
+                            canMoveDistanceX = otherEdgeX-forwardEdgeX;
+                            if (collisionComponent.layer == CollisionLayer::PLAYER && otherCollision.layer == CollisionLayer::BALL)
+                            {
+                                playerControlSystem->handleBallCollision(eid, otherCollision.eid);
+                            }
+                        }
+                        //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
                     }
-                    //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
                 }
             }
             if (hasCollision)
@@ -91,24 +103,31 @@ void CollisionSystem::update(float deltaTime)
             forwardEdgeX = forwardDirX == Direction::LEFT ? collisionComponent.boundingBox.getLeft() : collisionComponent.boundingBox.getRight();
             hasCollision = false;
 
-            for (unsigned int j = i+1; j < components.size(); ++j)
+            for (unsigned int j = 0; j < components.size(); ++j)
             {
                 CollisionComponent& otherCollision = components[j];
-                if (shouldCollide(collisionComponent, otherCollision) && newPos.collidesWith(otherCollision.boundingBox))
+                if (j != i)
                 {
-                    int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
-                    int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
-                    if (otherEdgeX != forwardEdgeX && abs(otherEdgeY-forwardEdgeY) <= abs(canMoveDistanceY))
+                    if (otherCollision.enabled && shouldCollide(collisionComponent, otherCollision) && newPos.collidesWith(otherCollision.boundingBox))
                     {
-                        hasCollision = true;
-                        if (forwardDirY == Direction::DOWN)
+                        int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
+                        int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
+                        if (otherEdgeX != forwardEdgeX && abs(otherEdgeY-forwardEdgeY) <= abs(canMoveDistanceY))
                         {
-                            hasGroundedCollision = true;
+                            hasCollision = true;
+                            if (forwardDirY == Direction::DOWN)
+                            {
+                                hasGroundedCollision = true;
+                            }
+                            if (collisionComponent.layer == CollisionLayer::PLAYER && otherCollision.layer == CollisionLayer::BALL)
+                            {
+                                playerControlSystem->handleBallCollision(eid, otherCollision.eid);
+                            }
+                            canMoveDistanceY = otherEdgeY-forwardEdgeY;
                         }
-                        canMoveDistanceY = otherEdgeY-forwardEdgeY;
-                    }
-                    //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
+                        //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
 
+                    }
                 }
             }
 

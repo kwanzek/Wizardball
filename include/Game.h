@@ -16,6 +16,7 @@
 #include "Systems/PlayerControlSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/PickupSystem.h"
 
 #include <vector>
 

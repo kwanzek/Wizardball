@@ -8,7 +8,7 @@
 
 struct VelocityComponent
 {
-    inline VelocityComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity) :
+    inline VelocityComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity, bool enabled = true) :
         eid(eid),
         dx(dx),
         dy(dy),
@@ -17,7 +17,8 @@ struct VelocityComponent
         maxYSpeed(maxYSpeed),
         baseIgnoreGravityTime(baseIgnoreGravityTime),
         currentIgnoreGravityTime(currentIgnoreGravityTime),
-        ignoreGravity(ignoreGravity)
+        ignoreGravity(ignoreGravity),
+        enabled(enabled)
     {}
     int eid;
     float dx;
@@ -28,6 +29,7 @@ struct VelocityComponent
     float baseIgnoreGravityTime;
     float currentIgnoreGravityTime;
     bool ignoreGravity;
+    bool enabled;
 };
 
 class MovementSystem : public System

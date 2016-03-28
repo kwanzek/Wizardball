@@ -7,6 +7,7 @@
 #include "Systems/MovementSystem.h"
 #include "Systems/StateSystem.h"
 #include "Systems/PlayerInputSystem.h"
+#include "Systems/PickupSystem.h"
 #include "EntityFactory.h"
 #include "System.h"
 
@@ -28,6 +29,7 @@ public:
     float jumpForce = 150.f;
 };
 
+class PickupSystem;
 class PlayerControlSystem : public System
 {
     public:
@@ -37,7 +39,8 @@ class PlayerControlSystem : public System
             TransformSystem* ts,
             MovementSystem* ms,
             StateSystem* ss,
-            PlayerInputSystem* pis
+            PlayerInputSystem* pis,
+            PickupSystem* pickupSys
         );
         ~PlayerControlSystem();
         void update(float deltaTime);
@@ -52,6 +55,7 @@ class PlayerControlSystem : public System
         MovementSystem* movementSystem;
         StateSystem* stateSystem;
         PlayerInputSystem* playerInputSystem;
+        PickupSystem* pickupSystem;
         //TODO: This should be behind a service locator
         EntityFactory* entityFactory;
 
@@ -59,6 +63,7 @@ class PlayerControlSystem : public System
         std::vector<int> handles;
 
         bool didAction(PlayerCommand playerCommand, PlayerInputComponent& playerInputComponent);
+        void handleBallCollision(int eid, int otherEID);
     protected:
     private:
 };

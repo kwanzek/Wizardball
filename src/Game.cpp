@@ -143,15 +143,25 @@ void Game::setupSpaces()
     StateSystem* gameplayStateSystem = new StateSystem();
     PlayerInputSystem* gameplayPIS = new PlayerInputSystem();
     MovementSystem* gameplayMovementSystem = new MovementSystem(gameplayTransformSystem);
-    PlayerControlSystem* gameplayPCS = new PlayerControlSystem(this->inputHandler, gameplayTransformSystem, gameplayMovementSystem, gameplayStateSystem, gameplayPIS);
-    CollisionSystem* gameplayCollisionSystem = new CollisionSystem(gameplayTransformSystem, gameplayMovementSystem);
+    PickupSystem* gameplayPickupSystem = new PickupSystem(gameplayTransformSystem, gameplayMovementSystem);
     RenderSystem* gameplayRenderSystem = new RenderSystem(this->graphics, gameplayTransformSystem, gameplayStateSystem);
+    PlayerControlSystem* gameplayPCS = new PlayerControlSystem(
+        this->inputHandler,
+        gameplayTransformSystem,
+        gameplayMovementSystem,
+        gameplayStateSystem,
+        gameplayPIS,
+        gameplayPickupSystem
+    );
+    CollisionSystem* gameplayCollisionSystem = new CollisionSystem(gameplayTransformSystem, gameplayMovementSystem, gameplayPCS);
+
 
     gameplay->addSystem(gameplayTransformSystem);
     gameplay->addSystem(gameplayStateSystem);
     gameplay->addSystem(gameplayPIS);
     gameplay->addSystem(gameplayPCS);
     gameplay->addSystem(gameplayCollisionSystem);
+    gameplay->addSystem(gameplayPickupSystem);
     gameplay->addSystem(gameplayMovementSystem);
     gameplay->renderSystem = gameplayRenderSystem;
 
@@ -168,7 +178,7 @@ void Game::setupSpaces()
     );
 
     gameplayPCS->entityFactory = &this->gameplay->entityFactory;
-
+    gameplayPickupSystem->collisionSystem = gameplayCollisionSystem;
     //Set up menu
     /*
     this->mainmenu = new Space("MAINMENU", *this->inputHandler);

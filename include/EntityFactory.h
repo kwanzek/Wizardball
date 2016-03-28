@@ -19,6 +19,7 @@
 #include <unordered_map>
 
 class PlayerControlSystem;
+class CollisionSystem;
 class EntityFactory
 {
     public:

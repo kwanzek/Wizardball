@@ -3,8 +3,12 @@
 
 StateSystem::StateSystem()
 {
-    components.reserve(100);
-    handles.reserve(100);
+    components.reserve(65535);
+    handles.reserve(65535);
+    for (unsigned int i = 0; i < handles.capacity(); ++i)
+    {
+        handles.push_back(-1);
+    }
 }
 
 StateSystem::~StateSystem()

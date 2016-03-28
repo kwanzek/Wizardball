@@ -6,32 +6,37 @@
 
 #include "MovementSystem.h"
 #include "TransformSystem.h"
+#include "PlayerControlSystem.h"
 #include "Constants.h"
 #include "System.h"
 
 #include "Utils/Rectangle.h"
 
+class PlayerControlSystem;
+
 struct CollisionComponent
 {
 public:
 
-    inline CollisionComponent(int eid, float x, float y, float width, float height, CollisionLayer::Layer layer)
+    inline CollisionComponent(int eid, float x, float y, float width, float height, CollisionLayer::Layer layer, bool enabled = true)
     {
         this->layer = layer;
         this->eid = eid;
         boundingBox = { static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height) };
+        this->enabled = enabled;
     };
 
     int eid;
     CollisionLayer::Layer layer;
     Rectangle boundingBox;
+    bool enabled;
 };
 
 class CollisionSystem : public System
 {
     public:
         CollisionSystem();
-        CollisionSystem(TransformSystem* transformSystem, MovementSystem* movementSystem);
+        CollisionSystem(TransformSystem* transformSystem, MovementSystem* movementSystem, PlayerControlSystem* PCS);
         ~CollisionSystem();
         void update(float deltaTime);
 
@@ -49,6 +54,7 @@ class CollisionSystem : public System
 
         TransformSystem* transformSystem;
         MovementSystem* movementSystem;
+        PlayerControlSystem* playerControlSystem;
 
         std::vector<CollisionComponent> components;
         std::vector<int> handles;

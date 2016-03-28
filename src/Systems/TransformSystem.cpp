@@ -8,9 +8,8 @@ TransformSystem::TransformSystem()
     handles.reserve(65535);
     for (unsigned int i = 0; i < handles.capacity(); ++i)
     {
-        handles[i] = -1;
+        handles.push_back(-1);
     }
-    //components.emplace_back(0, 0, 0);
 }
 
 TransformSystem::~TransformSystem()

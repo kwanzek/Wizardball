@@ -21,7 +21,7 @@ MovementSystem::MovementSystem(TransformSystem* transformSystem):
     handles.reserve(65535);
     for (unsigned int i = 0; i < handles.capacity(); ++i)
     {
-        handles[i] = -1;
+        handles.push_back(-1);
     }
 }
 
@@ -36,6 +36,10 @@ void MovementSystem::update(float deltaTime)
     for (int i = 0; i < this->components.size(); ++i)
     {
         VelocityComponent& velocityComponent = components[i];
+        if (!velocityComponent.enabled)
+        {
+            continue;
+        }
         int entityID = velocityComponent.eid;
         if (transformSystem->hasComponent(entityID))
         {
