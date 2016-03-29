@@ -81,14 +81,16 @@ void CollisionSystem::update(float deltaTime)
                     {
                         int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
                         int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
+
+                        if (collisionComponent.layer == CollisionLayer::PLAYER && otherCollision.layer == CollisionLayer::BALL)
+                        {
+                            playerControlSystem->handleBallCollision(eid, otherCollision.eid);
+                        }
                         if (otherEdgeY != forwardEdgeY && abs(otherEdgeX-forwardEdgeX) <= abs(canMoveDistanceX))
                         {
                             hasCollision = true;
                             canMoveDistanceX = otherEdgeX-forwardEdgeX;
-                            if (collisionComponent.layer == CollisionLayer::PLAYER && otherCollision.layer == CollisionLayer::BALL)
-                            {
-                                playerControlSystem->handleBallCollision(eid, otherCollision.eid);
-                            }
+
                         }
                         //this->handleCollision(newPos, transformComponent, collisionComponent, velocityComponent, otherCollision, axis, deltaTime);
                     }
@@ -112,16 +114,17 @@ void CollisionSystem::update(float deltaTime)
                     {
                         int otherEdgeX = forwardDirX == Direction::LEFT ? otherCollision.boundingBox.getRight() : otherCollision.boundingBox.getLeft();
                         int otherEdgeY = forwardDirY == Direction::UP ? otherCollision.boundingBox.getBottom() : otherCollision.boundingBox.getTop();
-                        if (otherEdgeX != forwardEdgeX && abs(otherEdgeY-forwardEdgeY) <= abs(canMoveDistanceY))
+                        if (collisionComponent.layer == CollisionLayer::PLAYER && otherCollision.layer == CollisionLayer::BALL)
+                        {
+                            playerControlSystem->handleBallCollision(eid, otherCollision.eid);
+                        }
+
+                        if ((otherCollision.boundingBox.getRight() != collisionComponent.boundingBox.getLeft() && otherCollision.boundingBox.getLeft() != collisionComponent.boundingBox.getRight()) && abs(otherEdgeY-forwardEdgeY) <= abs(canMoveDistanceY))
                         {
                             hasCollision = true;
                             if (forwardDirY == Direction::DOWN)
                             {
                                 hasGroundedCollision = true;
-                            }
-                            if (collisionComponent.layer == CollisionLayer::PLAYER && otherCollision.layer == CollisionLayer::BALL)
-                            {
-                                playerControlSystem->handleBallCollision(eid, otherCollision.eid);
                             }
                             canMoveDistanceY = otherEdgeY-forwardEdgeY;
                         }

@@ -78,14 +78,18 @@ PickupComponent& PickupSystem::getComponent(int eid)
 
 void PickupSystem::throwBall(int eid, int otherEID)
 {
-    if (collisionSystem->hasComponent(otherEID) && movementSystem->hasComponent(otherEID))
+    if (collisionSystem->hasComponent(otherEID) && movementSystem->hasComponent(otherEID) && transformSystem->hasComponent(eid))
     {
         CollisionComponent& otherCollision = collisionSystem->getComponent(otherEID);
         VelocityComponent& otherVelocity = movementSystem->getComponent(otherEID);
+        TransformComponent& transformComponent = transformSystem->getComponent(eid);
         otherCollision.enabled = true;
         otherVelocity.enabled = true;
+        int facing = transformComponent.facing == Direction::LEFT ? -1 : 1;
+        otherVelocity.dy = -300;
+        otherVelocity.dx = 100*facing;
+        this->deleteComponent(eid);
     }
-    this->deleteComponent(eid);
 }
 
 void PickupSystem::pickupBall(int eid, int otherEID)

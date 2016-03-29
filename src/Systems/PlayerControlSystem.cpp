@@ -53,6 +53,7 @@ void PlayerControlSystem::update(float deltaTime)
     {
         PlayerControllerComponent& playerControllerComponent = components[i];
         int eid = playerControllerComponent.eid;
+        playerControllerComponent.threwBall = false;
         if ( transformSystem->hasComponent(eid)
                && movementSystem->hasComponent(eid)
                && playerInputSystem->hasComponent(eid)
@@ -115,6 +116,7 @@ void PlayerControlSystem::update(float deltaTime)
             {
                 PickupComponent &pickupComponent = pickupSystem->getComponent(eid);
                 pickupSystem->throwBall(eid, pickupComponent.otherEID);
+                playerControllerComponent.threwBall = true;
             }
         }
     }
@@ -129,7 +131,7 @@ PlayerControllerComponent& PlayerControlSystem::addComponent(int eid)
 
 bool PlayerControlSystem::deleteComponent(int eid)
 {
-    if (eid < handles.size())
+    if (eid < handles.capacity() && this->hasComponent(eid))
     {
         int index = handles[eid];
         components[index] = components[components.size()-1];
@@ -144,7 +146,7 @@ bool PlayerControlSystem::deleteComponent(int eid)
 
 bool PlayerControlSystem::hasComponent(int eid)
 {
-    if (eid < handles.size())
+    if (eid < handles.capacity())
     {
         return handles[eid] != -1;
     }
@@ -153,7 +155,7 @@ bool PlayerControlSystem::hasComponent(int eid)
 
 PlayerControllerComponent& PlayerControlSystem::getComponent(int eid)
 {
-    assert (eid < handles.size() && this->hasComponent(eid));
+    assert (eid < handles.capacity() && this->hasComponent(eid));
     return components[handles[eid]];
 }
 
@@ -184,10 +186,11 @@ bool PlayerControlSystem::didAction(PlayerCommand playerCommand, PlayerInputComp
 
 void PlayerControlSystem::handleBallCollision(int eid, int otherEID)
 {
-    if (playerInputSystem->hasComponent(eid))
+    if (playerInputSystem->hasComponent(eid) && this->hasComponent(eid))
     {
         PlayerInputComponent& playerInputComponent = playerInputSystem->getComponent(eid);
-        if (this->didAction(PlayerCommand::PICKUP, playerInputComponent))
+        PlayerControllerComponent& playerControllerComponent = this->getComponent(eid);
+        if (this->didAction(PlayerCommand::PICKUP, playerInputComponent) && !playerControllerComponent.threwBall)
         {
             pickupSystem->pickupBall(eid, otherEID);
         }

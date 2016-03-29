@@ -44,7 +44,6 @@ void MovementSystem::update(float deltaTime)
         if (transformSystem->hasComponent(entityID))
         {
             TransformComponent& transformComponent = transformSystem->getComponent(entityID);
-
             transformComponent.x += (velocityComponent.dx * deltaTime);
 
             if (!transformComponent.grounded && velocityComponent.dy < velocityComponent.maxYSpeed && !velocityComponent.ignoreGravity && !velocityComponent.currentIgnoreGravityTime > 0)

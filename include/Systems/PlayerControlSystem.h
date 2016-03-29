@@ -27,6 +27,7 @@ public:
     };
     PlayerState state;
     float jumpForce = 150.f;
+    bool threwBall = false;
 };
 
 class PickupSystem;

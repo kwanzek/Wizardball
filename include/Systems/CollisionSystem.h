@@ -30,6 +30,7 @@ public:
     CollisionLayer::Layer layer;
     Rectangle boundingBox;
     bool enabled;
+    bool ignoreOneFrame = false;
 };
 
 class CollisionSystem : public System
