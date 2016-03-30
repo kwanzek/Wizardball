@@ -8,13 +8,26 @@
 
 struct VelocityComponent
 {
-    inline VelocityComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity, bool enabled = true) :
+    inline VelocityComponent(
+        int eid,
+        float dx,
+        float dy,
+        float maxXSpeedGround,
+        float maxXSpeedAir,
+        float maxYSpeed,
+        float xFriction,
+        float baseIgnoreGravityTime,
+        float currentIgnoreGravityTime,
+        bool ignoreGravity,
+        bool enabled = true
+    ) :
         eid(eid),
         dx(dx),
         dy(dy),
         maxXSpeedGround(maxXSpeedGround),
         maxXSpeedAir(maxXSpeedAir),
         maxYSpeed(maxYSpeed),
+        xFriction(xFriction),
         baseIgnoreGravityTime(baseIgnoreGravityTime),
         currentIgnoreGravityTime(currentIgnoreGravityTime),
         ignoreGravity(ignoreGravity),
@@ -26,6 +39,7 @@ struct VelocityComponent
     float maxXSpeedGround;
     float maxXSpeedAir;
     float maxYSpeed;
+    float xFriction;
     float baseIgnoreGravityTime;
     float currentIgnoreGravityTime;
     bool ignoreGravity;
@@ -40,7 +54,18 @@ class MovementSystem : public System
         ~MovementSystem();
         void update(float deltaTime);
 
-        VelocityComponent& addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime = 0.3f, float currentIgnoreGravityTime = 0.0f, bool ignoreGravity = false);
+        VelocityComponent& addComponent(
+            int eid,
+            float dx,
+            float dy,
+            float maxXSpeedGround,
+            float maxXSpeedAir,
+            float maxYSpeed,
+            float xFriction = 0.0f,
+            float baseIgnoreGravityTime = 0.3f,
+            float currentIgnoreGravityTime = 0.0f,
+            bool ignoreGravity = false
+        );
         bool deleteComponent(int eid);
         bool hasComponent(int eid);
         VelocityComponent& getComponent(int eid);

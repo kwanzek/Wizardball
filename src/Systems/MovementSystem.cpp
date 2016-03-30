@@ -2,8 +2,11 @@
 #include <unordered_map>
 #include <iterator>
 #include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <iostream>
+#include <stdlib.h>
+#include <algorithm>
 
 MovementSystem::MovementSystem():
     System()
@@ -44,13 +47,25 @@ void MovementSystem::update(float deltaTime)
         if (transformSystem->hasComponent(entityID))
         {
             TransformComponent& transformComponent = transformSystem->getComponent(entityID);
-            transformComponent.x += (velocityComponent.dx * deltaTime);
+
+            if (transformComponent.grounded && velocityComponent.xFriction > 0 && velocityComponent.dx != 0)
+            {
+                float oldDx = velocityComponent.dx;
+                float newDx = abs(velocityComponent.dx) - velocityComponent.xFriction *  deltaTime;
+                newDx = std::max(0.0f, newDx);
+                if (oldDx < 0)
+                {
+                    newDx *= -1;
+                }
+                velocityComponent.dx = newDx;
+            }
 
             if (!transformComponent.grounded && velocityComponent.dy < velocityComponent.maxYSpeed && !velocityComponent.ignoreGravity && !velocityComponent.currentIgnoreGravityTime > 0)
             {
                 velocityComponent.dy += globals::GRAVITY * deltaTime;
             }
 
+            transformComponent.x += (velocityComponent.dx * deltaTime);
             velocityComponent.dy = std::min(velocityComponent.dy, velocityComponent.maxYSpeed);
             transformComponent.y += velocityComponent.dy * deltaTime;
             transformComponent.y = (transformComponent.y);
@@ -60,9 +75,9 @@ void MovementSystem::update(float deltaTime)
 
 }
 
-VelocityComponent& MovementSystem::addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity)
+VelocityComponent& MovementSystem::addComponent(int eid, float dx, float dy, float maxXSpeedGround, float maxXSpeedAir, float maxYSpeed, float xFriction, float baseIgnoreGravityTime, float currentIgnoreGravityTime, bool ignoreGravity)
 {
-    components.push_back(VelocityComponent(eid,dx,dy, maxXSpeedGround, maxXSpeedAir, maxYSpeed, baseIgnoreGravityTime, currentIgnoreGravityTime, ignoreGravity));
+    components.push_back(VelocityComponent(eid,dx,dy, maxXSpeedGround, maxXSpeedAir, maxYSpeed, xFriction, baseIgnoreGravityTime, currentIgnoreGravityTime, ignoreGravity));
     handles[eid] = components.size()-1;
     return components[components.size()-1];
 }
